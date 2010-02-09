@@ -1,0 +1,5 @@
+; $Id$
+name = On The Web
+description = A block that links cute icons to your twitter, facebook, youtube, flickr, and myspace presence on the web.
+package = Other
+core = 6.x
