@@ -45,8 +45,8 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
     $form['sitename'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Site Name in link titles'),
-      '#default_value' => variable_get('on_the_web_myspace_page', TRUE),
-      '#description' => t('You would prefer to use your site name in the title for these links.'),
+      '#default_value' => variable_get('on_the_web_sitename', TRUE),
+      '#description' => t('You would prefer to use your !sitename in the title for these links.', array('!sitename' => l(t('Site name'), 'admin/settings/site-information'))),
     );
     return $form;
   }
@@ -78,8 +78,8 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
 function on_the_web_display_block_0(){
   $module_path = drupal_get_path('module', 'on_the_web');
   
-  if (!(variable_get('on_the_web_sitename', TRUE) && variable_get('site_name', FALSE))){
-    $name = variable_get('site_name', 'Us');
+  if (!(variable_get('on_the_web_sitename', TRUE) && ($name = variable_get('site_name', FALSE)))){
+    $name = t('Us');
   }
   
   $services = array(
