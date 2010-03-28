@@ -42,6 +42,12 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
       '#default_value' => variable_get('on_the_web_myspace_page', ''),
       '#description' => t('Please paste the full url, including http://'),
     );
+    $form['linkedin'] = array(
+      '#type' => 'textfield',
+      '#title' => t('LinkedIn Page'),
+      '#default_value' => variable_get('on_the_web_linkedin_page', ''),
+      '#description' => t('Please paste the full url, including http://'),
+    );
     $form['sitename'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Site Name in link titles'),
@@ -56,6 +62,7 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
     variable_set('on_the_web_youtube_page', $edit['youtube']);
     variable_set('on_the_web_flickr_page', $edit['flickr']);
     variable_set('on_the_web_myspace_page', $edit['myspace']);
+    variable_set('on_the_web_linkedin_page', $edit['linkedin']);
     variable_set('on_the_web_sitename', $edit['sitename']);
   }
   else if ($op == 'view') {
@@ -88,6 +95,7 @@ function on_the_web_display_block_0(){
     'youtube' => array('name' => 'YouTube'),
     'flickr' => array('name' => 'Flickr'),
     'myspace' => array('name' => 'MySpace'),
+    'linkedin' => array('name' => 'LinkedIn'),
     );
   
   $output = '';  
@@ -95,7 +103,7 @@ function on_the_web_display_block_0(){
     $page = variable_get('on_the_web_'.$service.'_page', FALSE);
     if ($page){
       $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
-      $image = theme('image', $module_path.'/images/logo-' . $service . '.jpg', $title, $title);
+      $image = theme('image', $module_path.'/images/logo-' . $service . '.png', $title, $title);
       $attributes  = array('title' => $title, 'target' => '_blank');
       $linked_image = l($image, $page, array('attributes' => $attributes, 'html' => TRUE));
       $output .= theme('on_the_web_icon', $linked_image);
