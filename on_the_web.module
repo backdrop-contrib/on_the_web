@@ -1,7 +1,6 @@
 <?php
 // $Id$
 
-
 /**
  * Implementation of hook_block().
  */
@@ -12,42 +11,15 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
     return $blocks;
   }
   elseif ($op == 'configure' && $delta == 0) {
-    $form['twitter'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Twitter Page'),
-      '#default_value' => variable_get('on_the_web_twitter_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
-    $form['facebook'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Facebook Page'),
-      '#default_value' => variable_get('on_the_web_facebook_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
-    $form['youtube'] = array(
-      '#type' => 'textfield',
-      '#title' => t('YouTube Page'),
-      '#default_value' => variable_get('on_the_web_youtube_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
-    $form['flickr'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Flickr Page'),
-      '#default_value' => variable_get('on_the_web_flickr_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
-    $form['myspace'] = array(
-      '#type' => 'textfield',
-      '#title' => t('MySpace Page'),
-      '#default_value' => variable_get('on_the_web_myspace_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
-    $form['linkedin'] = array(
-      '#type' => 'textfield',
-      '#title' => t('LinkedIn Page'),
-      '#default_value' => variable_get('on_the_web_linkedin_page', ''),
-      '#description' => t('Please paste the full url, including http://'),
-    );
+    $services = on_the_web_get_services();
+    foreach ($services as $service => $info){
+      $form[$service] = array(
+        '#type' => 'textfield',
+        '#title' => t($info['name'] . ' Page'),
+        '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
+        '#description' => t('Please paste the full url, including http://'),
+      );
+    }
     $form['sitename'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Site Name in link titles'),
@@ -57,12 +29,10 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
     return $form;
   }
   else if ($op == 'save' && $delta == 0) {
-    variable_set('on_the_web_twitter_page', $edit['twitter']);
-    variable_set('on_the_web_facebook_page', $edit['facebook']);
-    variable_set('on_the_web_youtube_page', $edit['youtube']);
-    variable_set('on_the_web_flickr_page', $edit['flickr']);
-    variable_set('on_the_web_myspace_page', $edit['myspace']);
-    variable_set('on_the_web_linkedin_page', $edit['linkedin']);
+    $services = on_the_web_get_services();
+    foreach ($services as $service => $info){
+      variable_set('on_the_web_' . $service . '_page', $edit[$service]);
+    }
     variable_set('on_the_web_sitename', $edit['sitename']);
   }
   else if ($op == 'view') {
@@ -89,14 +59,7 @@ function on_the_web_display_block_0(){
     $name = t('Us');
   }
   
-  $services = array(
-    'twitter' => array('name' => 'Twitter'),
-    'facebook' => array('name' => 'Facebook'),
-    'youtube' => array('name' => 'YouTube'),
-    'flickr' => array('name' => 'Flickr'),
-    'myspace' => array('name' => 'MySpace'),
-    'linkedin' => array('name' => 'LinkedIn'),
-    );
+  $services = on_the_web_get_services();
   
   $output = '';  
   foreach ($services as $service => $info){
@@ -108,9 +71,27 @@ function on_the_web_display_block_0(){
       $linked_image = l($image, $page, array('attributes' => $attributes, 'html' => TRUE));
       $output .= theme('on_the_web_icon', $linked_image);
     }
-  }  
+  }
 
   return $output;
+}
+
+/**
+ * Services
+ *
+ * @return 
+ *    List of services with icons.
+ */
+function on_the_web_get_services(){
+  return array(
+    'twitter' => array('name' => 'Twitter'),
+    'facebook' => array('name' => 'Facebook'),
+    'youtube' => array('name' => 'YouTube'),
+    'flickr' => array('name' => 'Flickr'),
+    'myspace' => array('name' => 'MySpace'),
+    'linkedin' => array('name' => 'LinkedIn'),
+    'itunes' => array('name' => 'iTunes'),
+    );
 }
 
 /**
