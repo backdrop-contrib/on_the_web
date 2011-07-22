@@ -1,55 +1,97 @@
 <?php
+/**
+ * @file 
+ * Adds a block with a series of icons which link off-site to other web presences.
+ */
 
 /**
- * Implementation of hook_block().
+ * Implementation of hook_block_info().
  */
-function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
-  if ($op == 'list') {
-    $blocks[0] = array('info' => t('On The Web'),
-      'weight' => 0, 'status' => 1, 'region' => 'right');
-    return $blocks;
-  }
-  elseif ($op == 'configure' && $delta == 0) {
+function on_the_web_block_info() {
+  $blocks[0] = array(
+    'info' => t('On The Web'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implementation of hook_block_configure().
+ */
+function on_the_web_block_configure($delta = 0) {
+  $form = array();
+  if ($delta == 0) {
+    
+    $form['services'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Icons are provided for the following services'),
+      '#description' => t('Please enter a fully-qualified URL for service you would like linked.'),
+    );
+    
     $services = on_the_web_get_services();
-    foreach ($services as $service => $info){
-      $form[$service] = array(
+    foreach ($services as $service => $info) {
+      $form['services'][$service] = array(
         '#type' => 'textfield',
         '#title' => t($info['name'] . ' Page'),
         '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
         '#description' => t('Please paste the full url, including http://'),
       );
     }
-    $form['sitename'] = array(
+    $form['services']['feed'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Show a similar icon for the RSS feed.'),
+      '#default_value' => variable_get('on_the_web_feed', FALSE),
+      '#description' => t('Checking this box his will add an RSS feed icon from this block.'),
+    );
+    $form['settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['settings']['sitename'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Site Name in link titles'),
       '#default_value' => variable_get('on_the_web_sitename', TRUE),
-      '#description' => t('You would prefer to use your !sitename in the title for these links.', array('!sitename' => l(t('Site name'), 'admin/settings/site-information'))),
+      '#description' => t('Unchecking this box will useUses the <a href="!url">Site name</a> as the title attribute for these links, for example: <em>Find !us on Facebook</em>', array('!url' => url('admin/config/system/site-information'), '!us' => variable_get('site_name', 'Drupal'))),
     );
-    $form['target'] = array(
+    $form['settings']['target'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open links in new windows'),
       '#default_value' => variable_get('on_the_web_target', TRUE),
       '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
     );
-    return $form;
   }
-  else if ($op == 'save' && $delta == 0) {
+  return $form;
+}
+
+ 
+/**
+ * Implementation of hook_block_save().
+ */
+function on_the_web_block_save($delta = 0, $edit = array()) {
+  // This example comes from node.module.
+  if ($delta == 0) {
     $services = on_the_web_get_services();
-    foreach ($services as $service => $info){
+    foreach ($services as $service => $info) {
       variable_set('on_the_web_' . $service . '_page', $edit[$service]);
     }
+    variable_set('on_the_web_feed', $edit['feed']);
     variable_set('on_the_web_sitename', $edit['sitename']);
     variable_set('on_the_web_target', $edit['target']);
   }
-  else if ($op == 'view') {
-    switch($delta) {
-      case 0:
-        $block = array('subject' => t('Find Us On...'),
-          'content' => on_the_web_display_block_0());
-        break;
-    }
-    return $block;
-  }
+}
+ 
+ 
+/**
+ * Implementation of hook_block_view().
+ */
+function on_the_web_block_view($delta = 0) {
+  $block = array(
+    'subject' => t('Find Us On...'),
+    'content' => on_the_web_display_block($delta)
+  );
+  
+  return $block;
 }
 
 /**
@@ -58,28 +100,35 @@ function on_the_web_block($op = 'list', $delta = 0, $edit = array()) {
  * @return 
  *    Content for block.
  */
-function on_the_web_display_block_0(){
-  $module_path = drupal_get_path('module', 'on_the_web');
+function on_the_web_display_block($delta) {
+  $output = '';
   
-  if (!(variable_get('on_the_web_sitename', TRUE) && ($name = variable_get('site_name', FALSE)))){
+  // Get the appropriate name to use in links.
+  if (variable_get('on_the_web_sitename', TRUE)) {
+    $name = variable_get('site_name', 'Drupal');
+  }
+  else {
     $name = t('Us');
   }
   
   $services = on_the_web_get_services();
-  
-  $output = '';  
-  foreach ($services as $service => $info){
-    $page = variable_get('on_the_web_'.$service.'_page', FALSE);
-    if ($page){
+    
+  foreach ($services as $service => $info) {
+    $link = variable_get('on_the_web_' . $service . '_page', FALSE);
+    if ($link) {
       $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
-      $image = theme('image', $module_path.'/images/logo-' . $service . '.png', $title, $title);
-      $attributes  = array('title' => $title);
-      if (variable_get('on_the_web_target', TRUE) == TRUE) {
-        $attributes['target'] = '_blank';
-      }
-      $linked_image = l($image, $page, array('attributes' => $attributes, 'html' => TRUE));
-      $output .= theme('on_the_web_icon', $linked_image);
+      $item = on_the_web_build_item($service, $link, $title);
+      $output .= theme('on_the_web_icon', array('linked_image' => $item));
     }
+  }
+  
+  // Add the RSS feed icon
+  $feed = variable_get('on_the_web_feed', FALSE);
+  if ($feed) {
+    $link =  'rss.xml';
+    $title = t('!us RSS feed', array('!us' => $name));
+    $item = on_the_web_build_item('rss', $link, $title);
+    $output .= theme('on_the_web_icon', array('linked_image' => $item));
   }
 
   return $output;
@@ -91,7 +140,7 @@ function on_the_web_display_block_0(){
  * @return 
  *    List of services with icons.
  */
-function on_the_web_get_services(){
+function on_the_web_get_services() {
   return array(
     'twitter' => array('name' => 'Twitter'),
     'facebook' => array('name' => 'Facebook'),
@@ -109,7 +158,7 @@ function on_the_web_get_services(){
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
     'on_the_web_icon' => array(
-      'arguments' => array('linked_image' => NULL),
+      'variables' => array('linked_image' => NULL),
     ),
   );
 }
@@ -122,10 +171,46 @@ function on_the_web_theme($existing, $type, $theme, $path) {
  * @return 
  *    Linked icon with wrapper markup.
  */
-function theme_on_the_web_icon($linked_image){
-  if ($linked_image){
-    $output = '<span class="on-the-web">' . $linked_image . '</span>';
+function theme_on_the_web_icon($variables) {
+  if ($variables['linked_image']) {
+    $output = '<span class="on-the-web">' . $variables['linked_image'] . '</span>';
     return $output;
   }
   return;
+}
+
+/**
+ * Theme function
+ *
+ * @param $service
+ *    Icon for appropriate service.
+ * @param $link
+ *    URL where link should point.
+ * @param $title
+ *    Title attribute for the link tag.
+ *
+ * @return 
+ *    Linked icon with wrapper markup.
+ */
+function on_the_web_build_item($service, $link, $title) {
+  // Assemble necessary variables for building the image.
+  $variables = array(
+    'path' => drupal_get_path('module', 'on_the_web') . '/images/logo-' . $service . '.png', 
+    'title' => $title,
+    'title' => $title,
+  );
+  
+  // Build the img tag.
+  $image = theme('image', $variables);
+  
+  // Determine attributes for the link
+  $attributes  = array('title' => $title);
+  if (variable_get('on_the_web_target', TRUE) == TRUE) {
+    $attributes['target'] = '_blank';
+  }
+  
+  // Link the image.
+  $linked_image = l($image, $link, array('attributes' => $attributes, 'html' => TRUE));
+  
+  return $linked_image;
 }
