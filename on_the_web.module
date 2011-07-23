@@ -50,9 +50,9 @@ function on_the_web_block_configure($delta = 0) {
     );
     $form['settings']['sitename'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use Site Name in link titles'),
+      '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
       '#default_value' => variable_get('on_the_web_sitename', TRUE),
-      '#description' => t('Unchecking this box will useUses the <a href="!url">Site name</a> as the title attribute for these links, for example: <em>Find !us on Facebook</em>', array('!url' => url('admin/config/system/site-information'), '!us' => variable_get('site_name', 'Drupal'))),
+      '#description' => t('Unchecking this box will use "us" as the title attribute for these links, instead of <em>Find !us on Facebook</em>.', array('!us' => variable_get('site_name', 'Drupal'))),
     );
     $form['settings']['target'] = array(
       '#type' => 'checkbox',
