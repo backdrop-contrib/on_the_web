@@ -130,6 +130,11 @@ function on_the_web_display_block($delta) {
     $item = on_the_web_build_item('rss', $link, $title);
     $output .= theme('on_the_web_icon', array('linked_image' => $item));
   }
+   $attributes  = array('title' => t('Icons by komodomedia.com'));
+  if (variable_get('on_the_web_target', TRUE) == TRUE) {
+    $attributes['target'] = '_blank';
+  }
+  $output .='<div class="attribution">' . t('Icons by !link', array('!link' => l('komodomedia.com', "http://komodomedia.com", array('attributes' => $attributes)))) . '</div>';
 
   return $output;
 }
@@ -149,6 +154,8 @@ function on_the_web_get_services() {
     'myspace' => array('name' => 'MySpace'),
     'linkedin' => array('name' => 'LinkedIn'),
     'itunes' => array('name' => 'iTunes'),
+    'delicious' => array('name' => 'Delicious'),
+    'friendfeed' => array('name' => 'FriendFeed')
     );
 }
 
