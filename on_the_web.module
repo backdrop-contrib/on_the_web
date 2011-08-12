@@ -48,6 +48,15 @@ function on_the_web_block_configure($delta = 0) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
+    $form['settings']['size'] = array(
+      '#type' => 'select',
+      '#title' => t('Icon size'),
+      '#options' => array(
+        'sm' => t('Small: 32px square'),
+        'lg' => t('Large: 64px square'),
+      ),
+      '#default_value' => array(variable_get('on_the_web_size', 'sm')),
+    );
     $form['settings']['sitename'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
@@ -76,6 +85,7 @@ function on_the_web_block_save($delta = 0, $edit = array()) {
       variable_set('on_the_web_' . $service . '_page', $edit[$service]);
     }
     variable_set('on_the_web_feed', $edit['feed']);
+    variable_set('on_the_web_size', $edit['size']); 
     variable_set('on_the_web_sitename', $edit['sitename']);
     variable_set('on_the_web_target', $edit['target']);
   }
@@ -134,7 +144,6 @@ function on_the_web_display_block($delta) {
   if (variable_get('on_the_web_target', TRUE) == TRUE) {
     $attributes['target'] = '_blank';
   }
-  $output .='<div class="attribution">' . t('Icons by !link', array('!link' => l('komodomedia.com', "http://komodomedia.com", array('attributes' => $attributes)))) . '</div>';
 
   return $output;
 }
@@ -200,9 +209,12 @@ function theme_on_the_web_icon($variables) {
  *    Linked icon with wrapper markup.
  */
 function on_the_web_build_item($service, $link, $title) {
+  // Get the size.
+  $size = variable_get('on_the_web_size', 'sm'); 
+  
   // Assemble necessary variables for building the image.
   $variables = array(
-    'path' => drupal_get_path('module', 'on_the_web') . '/images/logo-' . $service . '.png', 
+    'path' => drupal_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png', 
     'title' => $title,
     'title' => $title,
   );

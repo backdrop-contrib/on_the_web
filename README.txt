@@ -1,11 +1,14 @@
-Social Network Icon Pack License
+Contains the elegant social media icon set
 ------------------------------------------
-If you use these icons, please place an attribution link to komodomedia.com. Social Network Icon Pack by Rogie King is licensed under a Creative Commons Attribution-Share Alike 3.0 Unported License (http://creativecommons.org/licenses/by-nc-sa/3.0/). 
 
-Based on a work at www.komodomedia.com.
+This set can be downloaded here:
+http://www.elegantthemes.com/blog/resources/free-social-media-icon-set
 
-More rad downloads can be found at http://www.komodomedia.com/download/
+Created by Nicholas Roach, www.elegantthemes.com
 
-Feelin' the love? Donate to Paypal: rogie@komodomedia.com
+These icons are dual licensed under the MIT and GPL 3.0. 
+You can do anything you want with them, I don't care! 
+But if you appreciate my work then feel free to link back 
+to ElegantThemes.com :)
 
-Rogie claims no right of ownership to the respective company logos and glyphs in each one of these icons.
+
