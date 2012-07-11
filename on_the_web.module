@@ -20,13 +20,13 @@ function on_the_web_block_info() {
 function on_the_web_block_configure($delta = 0) {
   $form = array();
   if ($delta == 0) {
-    
+
     $form['services'] = array(
       '#type' => 'fieldset',
       '#title' => t('Icons are provided for the following services'),
       '#description' => t('Please enter a fully-qualified URL for service you would like linked.'),
     );
-    
+
     $services = on_the_web_get_services();
     foreach ($services as $service => $info) {
       $form['services'][$service] = array(
@@ -70,6 +70,7 @@ function on_the_web_block_configure($delta = 0) {
       '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
     );
   }
+
   return $form;
 }
 
@@ -100,7 +101,7 @@ function on_the_web_block_view($delta = 0) {
     'subject' => t('Find Us On...'),
     'content' => on_the_web_display_block($delta)
   );
-  
+
   return $block;
 }
 
@@ -112,7 +113,7 @@ function on_the_web_block_view($delta = 0) {
  */
 function on_the_web_display_block($delta) {
   $output = '';
-  
+
   // Get the appropriate name to use in links.
   if (variable_get('on_the_web_sitename', TRUE)) {
     $name = variable_get('site_name', 'Drupal');
@@ -120,23 +121,25 @@ function on_the_web_display_block($delta) {
   else {
     $name = t('Us');
   }
-  
+
   $services = on_the_web_get_services();
-    
+
   foreach ($services as $service => $info) {
     $link = variable_get('on_the_web_' . $service . '_page', FALSE);
     if ($link) {
       $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
-      $output .= theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
+      $linked_image = theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
+      $output .= theme('on_the_web_icon', array('linked_image' => $linked_image));
     }
   }
-  
+
   // Add the RSS feed icon
   $feed = variable_get('on_the_web_feed', FALSE);
   if ($feed) {
     $link =  'rss.xml';
     $title = t('!us RSS feed', array('!us' => $name));
-    $output .= theme('on_the_web_item', array('service' => 'rss', 'link' => $link, 'title' => $title));
+    $linked_image = theme('on_the_web_item', array('service' => 'rss', 'link' => $link, 'title' => $title));
+    $output .= theme('on_the_web_icon', array('linked_image' => $linked_image));
   }
    $attributes  = array('title' => t('Icons by komodomedia.com'));
   if (variable_get('on_the_web_target', TRUE) == TRUE) {
@@ -163,7 +166,7 @@ function on_the_web_get_services() {
     'itunes' => array('name' => 'iTunes'),
     'delicious' => array('name' => 'Delicious'),
     'friendfeed' => array('name' => 'FriendFeed')
-    );
+  );
 }
 
 /**
@@ -171,13 +174,34 @@ function on_the_web_get_services() {
  */
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
-    'on_the_web_item' => array(
-      'variables' => array('service' => NULL, 'link' => NULL, 'image' => NULL),
-    ),
     'on_the_web_icon' => array(
-      'variables' => array('service' => NULL, 'image' => NULL),
+      'variables' => array('linked_image' => NULL),
+    ),
+    'on_the_web_item' => array(
+      'variables' => array('service' => NULL, 'link' => NULL, 'title' => NULL),
+    ),
+    'on_the_web_image' => array(
+      'variables' => array('service' => NULL, 'title' => NULL),
     ),
   );
+}
+
+/**
+ * Theme function
+ *
+ * @param $linked_image
+ *    Linked icon.
+ * @return 
+ *    Linked image with wrapper markup.
+ */
+function theme_on_the_web_icon($variables){
+  $linked_image = $variables['linked_image'];
+
+  if ($linked_image){
+    $output = '<span class="on-the-web">' . $linked_image . '</span>';
+    return $output;
+  }
+  return;
 }
 
 /**
@@ -199,7 +223,7 @@ function theme_on_the_web_item($variables) {
   $title = $variables['title'];
 
   // Build the img tag.
-  $image = theme('on_the_web_icon', array('service' => $service, 'title' => $title));
+  $image = theme('on_the_web_image', array('service' => $service, 'title' => $title));
 
   // Determine attributes for the link
   $attributes  = array('title' => $title);
@@ -208,7 +232,7 @@ function theme_on_the_web_item($variables) {
   }
 
   // Link the image and wrap it in a span.
-  $linked_image = '<span class="on-the-web">' . l($image, $link, array('attributes' => $attributes, 'html' => TRUE)) . '</span>';
+  $linked_image = l($image, $link, array('attributes' => $attributes, 'html' => TRUE));
 
   return $linked_image;
 }
@@ -224,7 +248,7 @@ function theme_on_the_web_item($variables) {
  * @return 
  *    Icon image of appropriate size.
  */
-function theme_on_the_web_icon($variables) {
+function theme_on_the_web_image($variables) {
   $service = $variables['service'];
   $title = $variables['title'];
 
