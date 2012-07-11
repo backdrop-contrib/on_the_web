@@ -234,7 +234,7 @@ function theme_on_the_web_icon($variables) {
   // Assemble necessary variables for building the image.
   $variables = array(
     'path' => drupal_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png', 
-    'title' => $title,
+    'alt' => $title,
     'title' => $title,
   );
 
