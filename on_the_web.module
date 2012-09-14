@@ -167,6 +167,8 @@ function on_the_web_get_services() {
     'delicious' => array('name' => 'Delicious'),
     'friendfeed' => array('name' => 'FriendFeed')
   );
+
+  drupal_alter('on_the_web_get_services', $services);
 }
 
 /**
