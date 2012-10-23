@@ -150,13 +150,13 @@ function on_the_web_display_block($delta) {
 }
 
 /**
- * Services
+ * Gets the available services.
  *
- * @return 
- *    List of services with icons.
+ * @return array
+ *   List of services with icons.
  */
 function on_the_web_get_services() {
-  return array(
+  $services = array(
     'twitter' => array('name' => 'Twitter'),
     'facebook' => array('name' => 'Facebook'),
     'youtube' => array('name' => 'YouTube'),
@@ -169,6 +169,8 @@ function on_the_web_get_services() {
   );
 
   drupal_alter('on_the_web_get_services', $services);
+
+  return $services;
 }
 
 /**
