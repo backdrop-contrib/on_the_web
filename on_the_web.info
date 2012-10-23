@@ -2,6 +2,4 @@ name = On The Web
 description = A block that provides linked icons to your other presences on the web.
 core = 7.x
 
-dependancies[] = block
-
-
+dependencies[] = block
