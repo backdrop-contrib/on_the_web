@@ -159,6 +159,7 @@ function on_the_web_get_services() {
   $services = array(
     'twitter' => array('name' => 'Twitter'),
     'facebook' => array('name' => 'Facebook'),
+    'google' => array('name' => 'Google+'),
     'youtube' => array('name' => 'YouTube'),
     'flickr' => array('name' => 'Flickr'),
     'myspace' => array('name' => 'MySpace'),
