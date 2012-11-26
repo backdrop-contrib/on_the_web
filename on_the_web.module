@@ -124,26 +124,26 @@ function on_the_web_display_block($delta) {
 
   $services = on_the_web_get_services();
 
+  $count = 0;
   foreach ($services as $service => $info) {
     $link = variable_get('on_the_web_' . $service . '_page', FALSE);
     if ($link) {
+      $classes = array('on-the-web', 'otw-' . $service, 'otw-' . $count);
       $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
       $linked_image = theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
-      $output .= theme('on_the_web_icon', array('linked_image' => $linked_image));
+      $output .= theme('on_the_web_icon', array('linked_image' => $linked_image, 'classes' => $classes));
+      $count++;
     }
   }
 
   // Add the RSS feed icon
   $feed = variable_get('on_the_web_feed', FALSE);
   if ($feed) {
+    $classes = array('on-the-web', 'otw-feed', 'otw-' . $count);
     $link =  'rss.xml';
     $title = t('!us RSS feed', array('!us' => $name));
     $linked_image = theme('on_the_web_item', array('service' => 'rss', 'link' => $link, 'title' => $title));
-    $output .= theme('on_the_web_icon', array('linked_image' => $linked_image));
-  }
-   $attributes  = array('title' => t('Icons by komodomedia.com'));
-  if (variable_get('on_the_web_target', TRUE) == TRUE) {
-    $attributes['target'] = '_blank';
+    $output .= theme('on_the_web_icon', array('linked_image' => $linked_image, 'classes' => $classes));
   }
 
   return $output;
@@ -180,7 +180,7 @@ function on_the_web_get_services() {
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
     'on_the_web_icon' => array(
-      'variables' => array('linked_image' => NULL),
+      'variables' => array('linked_image' => NULL, 'classes' => NULL),
     ),
     'on_the_web_item' => array(
       'variables' => array('service' => NULL, 'link' => NULL, 'title' => NULL),
@@ -201,9 +201,10 @@ function on_the_web_theme($existing, $type, $theme, $path) {
  */
 function theme_on_the_web_icon($variables){
   $linked_image = $variables['linked_image'];
+  $classes = $variables['classes'] ? ' class="' . implode(' ', $variables['classes']) . '"' : '';
 
   if ($linked_image){
-    $output = '<span class="on-the-web">' . $linked_image . '</span>';
+    $output = '<span' . $classes . '>' . $linked_image . '</span>';
     return $output;
   }
   return;
