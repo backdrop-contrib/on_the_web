@@ -10,7 +10,7 @@
  * Deletes all module-specific variables on uninstall.
  */
 function on_the_web_uninstall() {
-  include_once(drupal_get_path('module', 'on_the_web') . '/on_the_web.module');
+  module_load_include('module', 'on_the_web', 'on_the_web');
   $services = on_the_web_get_services();
   foreach ($services as $service) {
     variable_del('on_the_web_' . $service . '_page');
