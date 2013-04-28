@@ -7,6 +7,73 @@
 /**
  * Implementation of hook_block_info().
  */
+function on_the_web_menu() {
+  $items['admin/config/services/on_the_web'] = array(
+    'title' => 'On The Web Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('on_the_web_settings_form'),
+    'access arguments' => array('administer blocks'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function on_the_web_settings_form($form, &$form_state) {
+  $form = array();
+
+  $form['size'] = array(
+    '#type' => 'select',
+    '#title' => t('Icon size'),
+    '#options' => array(
+      'sm' => t('Small: 32px square'),
+      'lg' => t('Large: 64px square'),
+    ),
+    '#default_value' => array(variable_get('on_the_web_size', 'sm')),
+  );
+  $form['sitename'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
+    '#default_value' => variable_get('on_the_web_sitename', TRUE),
+    '#description' => t('Unchecking this box will use "us" as the title attribute for these links, instead of <em>Find !us on Facebook</em>.', array('!us' => variable_get('site_name', 'Drupal'))),
+  );
+  $form['target'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Open links in new windows'),
+    '#default_value' => variable_get('on_the_web_target', TRUE),
+    '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
+  );
+
+  $form['services'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Social media site links'),
+    '#description' => t('Providing default values here may save you some time 
+      when adding the On The Web block in more than one place on your site.'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $services = on_the_web_get_services();
+  foreach ($services as $service => $info) {
+    $testagain = TRUE;
+    $form['services']['on_the_web_' . $service . '_page'] = array(
+      '#type' => 'textfield',
+      '#title' => t($info['name'] . ' Page'),
+      '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
+      '#description' => t('Please enter the full url, including http://'),
+    );
+    // Collapse the fieldset if any URL is already entered.
+    if ($testagain && $form['services']['on_the_web_' . $service . '_page']['#default_value'] != '') {
+      $form['services']['#collapsed'] = TRUE;
+      $testagain = FALSE;
+    }
+  }
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implementation of hook_block_info().
+ */
 function on_the_web_block_info() {
   $blocks[0] = array(
     'info' => t('On The Web'),
@@ -23,52 +90,58 @@ function on_the_web_block_configure($delta = 0) {
 
     $form['services'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Icons are provided for the following services'),
-      '#description' => t('Please enter a fully-qualified URL for service you would like linked.'),
+      '#title' => t('Icons provided for the following services:'),
+      '#description' => t('The URL for each service must be entered on the OTW
+        <a href="!url">settings page</a>.', array('!url' => url('admin/config/services/on_the_web'))),
+    );
+    
+    $form['services']['display'] = array(
+      '#type' => 'radios',
+      '#title' => t('Icon display'),
+      '#options' => array(
+        'auto' => t('Automatic'),
+        'manual' => t('Explicit'),
+      ),
+      '#default_value' => variable_get('on_the_web_display', 'auto'),
+    );
+
+    // Add descriptions to the radio buttons.
+    $form['services']['display']['auto'] = array(
+      '#description' => t('Show all icons that have corresponding links entered.'),
+    );
+    $form['services']['display']['manual'] = array(
+      '#description' => t('Explicity choose icons here.'),
     );
 
     $services = on_the_web_get_services();
+    $options = array();
+    $defaults = array();
     foreach ($services as $service => $info) {
-      $form['services'][$service] = array(
-        '#type' => 'textfield',
-        '#title' => t($info['name'] . ' Page'),
-        '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
-        '#description' => t('Please paste the full url, including http://'),
+      // Check the box by default if the service has a URL.
+      if (variable_get('on_the_web_' . $service . '_page', FALSE)) {
+        $options[$service] = $info['name'];
+        $defaults[$service] = $service;
+      }
+    }
+    if (!empty($options)) {
+      $form['services']['enabled'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Icons'),
+        '#options' => $options,
+        '#default_value' => variable_get('on_the_web_enabled', $defaults),
+        '#description' => t('Please select the icons you would like displayed in this block.'),
+        '#states' => array(
+          'visible' => array(
+            ':input[name="display"]' => array('value' => 'manual'),
+          ),
+        ),
       );
     }
-    $form['services']['feed'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Show a similar icon for the RSS feed.'),
-      '#default_value' => variable_get('on_the_web_feed', FALSE),
-      '#description' => t('Checking this box his will add an RSS feed icon from this block.'),
-    );
-    $form['settings'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Settings'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-    $form['settings']['size'] = array(
-      '#type' => 'select',
-      '#title' => t('Icon size'),
-      '#options' => array(
-        'sm' => t('Small: 32px square'),
-        'lg' => t('Large: 64px square'),
-      ),
-      '#default_value' => array(variable_get('on_the_web_size', 'sm')),
-    );
-    $form['settings']['sitename'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
-      '#default_value' => variable_get('on_the_web_sitename', TRUE),
-      '#description' => t('Unchecking this box will use "us" as the title attribute for these links, instead of <em>Find !us on Facebook</em>.', array('!us' => variable_get('site_name', 'Drupal'))),
-    );
-    $form['settings']['target'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Open links in new windows'),
-      '#default_value' => variable_get('on_the_web_target', TRUE),
-      '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
-    );
+    else {
+      $form['services']['none'] = array(
+        '#markup' => '<p class="warning">' . t('No services have been configured yet.') . '</p>',
+      );
+    }
   }
 
   return $form;
@@ -81,14 +154,10 @@ function on_the_web_block_configure($delta = 0) {
 function on_the_web_block_save($delta = 0, $edit = array()) {
   // This example comes from node.module.
   if ($delta == 0) {
-    $services = on_the_web_get_services();
-    foreach ($services as $service => $info) {
-      variable_set('on_the_web_' . $service . '_page', $edit[$service]);
+    variable_set('on_the_web_display', $edit['display']);
+    if ($edit['display'] == 'manual') {
+      variable_set('on_the_web_enabled', $edit['enabled']);
     }
-    variable_set('on_the_web_feed', $edit['feed']);
-    variable_set('on_the_web_size', $edit['size']); 
-    variable_set('on_the_web_sitename', $edit['sitename']);
-    variable_set('on_the_web_target', $edit['target']);
   }
 }
  
@@ -122,28 +191,31 @@ function on_the_web_display_block($delta) {
     $name = t('Us');
   }
 
+  // Get the display style.
+  $display = variable_get('on_the_web_display', 'auto');
+  if ($display == 'manual') {
+    $enabled = variable_get('on_the_web_enabled', array());
+//    dpm($enabled);
+  }
+
   $services = on_the_web_get_services();
 
   $count = 0;
   foreach ($services as $service => $info) {
     $link = variable_get('on_the_web_' . $service . '_page', FALSE);
-    if ($link) {
+    if (($display == 'auto' && $link) || 
+        ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
       $classes = array('on-the-web', 'otw-' . $service, 'otw-' . $count);
-      $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
+      if ($service != 'rss') {
+        $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
+      }
+      else {
+        $title = t('!us RSS feed', array('!us' => $name));
+      }
       $linked_image = theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
       $output .= theme('on_the_web_icon', array('linked_image' => $linked_image, 'classes' => $classes));
       $count++;
     }
-  }
-
-  // Add the RSS feed icon
-  $feed = variable_get('on_the_web_feed', FALSE);
-  if ($feed) {
-    $classes = array('on-the-web', 'otw-feed', 'otw-' . $count);
-    $link =  'rss.xml';
-    $title = t('!us RSS feed', array('!us' => $name));
-    $linked_image = theme('on_the_web_item', array('service' => 'rss', 'link' => $link, 'title' => $title));
-    $output .= theme('on_the_web_icon', array('linked_image' => $linked_image, 'classes' => $classes));
   }
 
   return $output;
@@ -166,7 +238,8 @@ function on_the_web_get_services() {
     'linkedin' => array('name' => 'LinkedIn'),
     'itunes' => array('name' => 'iTunes'),
     'delicious' => array('name' => 'Delicious'),
-    'friendfeed' => array('name' => 'FriendFeed')
+    'friendfeed' => array('name' => 'FriendFeed'),
+    'rss' => array('name' => 'RSS'),
   );
 
   drupal_alter('on_the_web_get_services', $services);
@@ -259,7 +332,7 @@ function theme_on_the_web_image($variables) {
   $title = $variables['title'];
 
   // Get the size.
-  $size = variable_get('on_the_web_size', 'sm'); 
+  $size = variable_get('on_the_web_size', 'sm');
 
   // Assemble necessary variables for building the image.
   $variables = array(

@@ -1,5 +1,4 @@
 name = On The Web
 description = A block that provides linked icons to your other presences on the web.
 core = 7.x
-
-dependencies[] = block
+configure = admin/config/services/on_the_web
