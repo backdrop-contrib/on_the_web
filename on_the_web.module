@@ -25,7 +25,7 @@ function on_the_web_menu() {
 function on_the_web_settings_form($form, &$form_state) {
   $form = array();
 
-  $form['size'] = array(
+  $form['on_the_web_size'] = array(
     '#type' => 'select',
     '#title' => t('Icon size'),
     '#options' => array(
@@ -34,13 +34,13 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
     '#default_value' => array(variable_get('on_the_web_size', 'sm')),
   );
-  $form['sitename'] = array(
+  $form['on_the_web_sitename'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
     '#default_value' => variable_get('on_the_web_sitename', TRUE),
     '#description' => t('Unchecking this box will use "us" as the title attribute for these links, instead of <em>Find !us on Facebook</em>.', array('!us' => variable_get('site_name', 'Drupal'))),
   );
-  $form['target'] = array(
+  $form['on_the_web_target'] = array(
     '#type' => 'checkbox',
     '#title' => t('Open links in new windows'),
     '#default_value' => variable_get('on_the_web_target', TRUE),
@@ -233,6 +233,7 @@ function on_the_web_get_services() {
   $services = array(
     'twitter' => array('name' => 'Twitter'),
     'facebook' => array('name' => 'Facebook'),
+    'pinterest' => array('name' => 'Pinterest'),
     'google' => array('name' => 'Google+'),
     'youtube' => array('name' => 'YouTube'),
     'flickr' => array('name' => 'Flickr'),
