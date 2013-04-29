@@ -19,6 +19,9 @@ function on_the_web_menu() {
   return $items;
 }
 
+/**
+ * Settings form.
+ */
 function on_the_web_settings_form($form, &$form_state) {
   $form = array();
 
@@ -94,7 +97,7 @@ function on_the_web_block_configure($delta = 0) {
       '#description' => t('The URL for each service must be entered on the OTW
         <a href="!url">settings page</a>.', array('!url' => url('admin/config/services/on_the_web'))),
     );
-    
+
     $form['services']['display'] = array(
       '#type' => 'radios',
       '#title' => t('Icon display'),
@@ -191,11 +194,10 @@ function on_the_web_display_block($delta) {
     $name = t('Us');
   }
 
-  // Get the display style.
+  // Get the display style, and enabled icons.
   $display = variable_get('on_the_web_display', 'auto');
   if ($display == 'manual') {
     $enabled = variable_get('on_the_web_enabled', array());
-//    dpm($enabled);
   }
 
   $services = on_the_web_get_services();
