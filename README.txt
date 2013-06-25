@@ -14,7 +14,9 @@ http://drupal.org/documentation/install/modules-themes/modules-7
 Configuration
 --------------
 Links for your site can be added in the block's configuration at
-Admin > Structure > Blocks.
+  Admin > Configure > Web services > On The Web
+The Social Media Icons block can be configured and placed ad
+  Admin > Structure > Blocks.
 
 
 Icon Set
@@ -24,3 +26,8 @@ http://www.elegantthemes.com/blog/resources/free-social-media-icon-set
 Created by Nicholas Roach, www.elegantthemes.com
 These icons are dual licensed under the MIT and GPL 3.0.
 
+
+Support
+-------
+Please use the issue queue to report bugs or ask for support:
+https://drupal.org/project/issues/on_the_web
