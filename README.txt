@@ -29,5 +29,5 @@ These icons are dual licensed under the MIT and GPL 3.0.
 
 Support
 -------
-Please use the issue queue to report bugs or ask for support:
+Please use the issue queue to report bugs or request support:
 https://drupal.org/project/issues/on_the_web
