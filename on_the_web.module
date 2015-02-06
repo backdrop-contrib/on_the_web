@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file 
  * Adds a block with a series of icons which link off-site to other web presences.
@@ -181,7 +180,7 @@ function on_the_web_block_view($delta = 0) {
 /**
  * Block Display
  *
- * @return 
+ * @return
  *    Content for block.
  */
 function on_the_web_display_block($delta) {
@@ -297,7 +296,7 @@ function theme_on_the_web_icon($variables){
  * @param $title
  *    Title attribute for the link tag.
  *
- * @return 
+ * @return
  *    Linked icon with wrapper markup.
  */
 function theme_on_the_web_item($variables) {
@@ -309,7 +308,10 @@ function theme_on_the_web_item($variables) {
   $image = theme('on_the_web_image', array('service' => $service, 'title' => $title));
 
   // Determine attributes for the link
-  $attributes  = array('title' => $title);
+  $attributes  = array(
+    'title' => $title
+    'rel' => 'nofollow',
+  );
   if (variable_get('on_the_web_target', TRUE) == TRUE) {
     $attributes['target'] = '_blank';
   }
