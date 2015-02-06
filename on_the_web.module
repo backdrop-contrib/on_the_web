@@ -47,31 +47,57 @@ function on_the_web_settings_form($form, &$form_state) {
     '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
   );
 
-  $form['services'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Social media site links'),
-    '#description' => t('Providing default values here may save you some time 
-      when adding the On The Web block in more than one place on your site.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => FALSE,
-  );
+  // Get all the services.
   $services = on_the_web_get_services();
+
   foreach ($services as $service => $info) {
-    $testagain = TRUE;
-    $form['services']['on_the_web_' . $service . '_page'] = array(
-      '#type' => 'textfield',
-      '#title' => t($info['name'] . ' Page'),
-      '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
-      '#description' => t('Please enter the full url, including http://'),
+    $weight = variable_get('on_the_web_' . $service . '_weight', 0);
+
+    $form['services'][$service] = array(
+      '#tree' => TRUE,
+      '#weight' => $weight,
     );
-    // Collapse the fieldset if any URL is already entered.
-    if ($testagain && $form['services']['on_the_web_' . $service . '_page']['#default_value'] != '') {
-      $form['services']['#collapsed'] = TRUE;
-      $testagain = FALSE;
-    }
+
+    $form['services'][$service]['name'] = array('#hidden' => $service);
+
+    $form['services'][$service]['title'] = array('#markup' => $info['name']);
+
+    $form['services'][$service]['weight'] = array(
+      '#type' => 'weight',
+      '#default_value' => $weight,
+    );
+
+    $form['services'][$service]['page'] = array(
+      '#type' => 'textfield',
+      '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
+    );
   }
 
-  return system_settings_form($form);
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Submit'));
+
+  return $form;
+}
+
+
+/**
+ * Submit handler for on_the_web_settings_form().
+ */
+function on_the_web_settings_form_submit($form, &$form_state) {
+  //dpm($form_state['values']);
+  $services = on_the_web_get_services();
+  foreach ($form_state['values'] as $key => $value) {
+    // Save the global (string) variables.
+    if (strstr($key, 'on_the_web')) {
+      variable_set($key, $value);
+    }
+
+    // Save the service (array) variables.
+    if (array_key_exists($key, $services)) {
+      foreach ($value as $name => $setting) {
+        variable_set('on_the_web_' . $key . '_' . $name, $setting);
+      }
+    }
+  }
 }
 
 /**
@@ -121,16 +147,27 @@ function on_the_web_block_configure($delta = 0) {
     $defaults = array();
     foreach ($services as $service => $info) {
       // Check the box by default if the service has a URL.
-      if (variable_get('on_the_web_' . $service . '_page', FALSE)) {
-        $options[$service] = $info['name'];
+      $info['page'] = variable_get('on_the_web_' . $service . '_page', FALSE);
+      if ($info['page']) {
+        $info['weight'] = variable_get('on_the_web_' . $service . '_weight', 0);
+        $options[$service] = $info;
         $defaults[$service] = $service;
       }
     }
+
+    // Sort the options on the block form to match weight.
+    uasort($options, 'drupal_sort_weight');
+
+    $sorted_options = array();
+    foreach ($options as $service => $info) {
+      $sorted_options[$service] = $info['name'];
+    }
+
     if (!empty($options)) {
       $form['services']['enabled'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Icons'),
-        '#options' => $options,
+        '#options' => $sorted_options,
         '#default_value' => variable_get('on_the_web_enabled', $defaults),
         '#description' => t('Please select the icons you would like displayed in this block.'),
         '#states' => array(
@@ -202,25 +239,34 @@ function on_the_web_display_block($delta) {
 
   $services = on_the_web_get_services();
 
-  $count = 0;
+  $links = array();
   foreach ($services as $service => $info) {
     $link = variable_get('on_the_web_' . $service . '_page', FALSE);
+
     if (($display == 'auto' && $link) || 
         ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
-      $classes = array('on-the-web', 'otw-' . $service, 'otw-' . $count);
+
       if ($service != 'rss') {
         $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
       }
       else {
         $title = t('!us RSS feed', array('!us' => $name));
       }
+
+      $weight = variable_get('on_the_web_' . $service . '_weight', FALSE);
       $linked_image = theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
-      $output .= theme('on_the_web_icon', array('linked_image' => $linked_image, 'classes' => $classes));
-      $count++;
+      $classes = array('on-the-web', 'otw-' . $service);
+
+      $links[] = array(
+        '#weight' => $weight,
+        '#theme' => 'on_the_web_icon',
+        '#linked_image' => $linked_image,
+        '#classes' => $classes,
+      );
     }
   }
 
-  return $output;
+  return drupal_render($links);
 }
 
 /**
@@ -257,6 +303,10 @@ function on_the_web_get_services() {
  */
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
+    'on_the_web_settings_form' => array(
+      'render element' => 'form',
+      'file' => 'on_the_web.theme.inc',
+    ),
     'on_the_web_icon' => array(
       'variables' => array('linked_image' => NULL, 'classes' => NULL),
       'file' => 'on_the_web.theme.inc',
