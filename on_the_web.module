@@ -309,7 +309,7 @@ function theme_on_the_web_item($variables) {
 
   // Determine attributes for the link
   $attributes  = array(
-    'title' => $title
+    'title' => $title,
     'rel' => 'nofollow',
   );
   if (variable_get('on_the_web_target', TRUE) == TRUE) {
