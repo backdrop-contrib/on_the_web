@@ -280,6 +280,7 @@ function on_the_web_get_services() {
     'twitter' => array('name' => 'Twitter'),
     'facebook' => array('name' => 'Facebook'),
     'pinterest' => array('name' => 'Pinterest'),
+    'instagram' => array('name' => 'Instagram'),
     'google' => array('name' => 'Google+'),
     'youtube' => array('name' => 'YouTube'),
     'flickr' => array('name' => 'Flickr'),
@@ -287,6 +288,7 @@ function on_the_web_get_services() {
     'linkedin' => array('name' => 'LinkedIn'),
     'itunes' => array('name' => 'iTunes'),
     'delicious' => array('name' => 'Delicious'),
+    'soundcloud' => array('name' => 'Soundcloud'),
     'friendfeed' => array('name' => 'FriendFeed'),
     'rss' => array('name' => 'RSS'),
   );
