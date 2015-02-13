@@ -1,6 +1,6 @@
 <?php
 /**
- * @file 
+ * @file
  * Adds a block with a series of icons which link off-site to other web presences.
  */
 
@@ -10,116 +10,50 @@
 function on_the_web_menu() {
   $items['admin/config/services/on_the_web'] = array(
     'title' => 'On The Web Settings',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('on_the_web_settings_form'),
     'access arguments' => array('administer blocks'),
     'type' => MENU_NORMAL_ITEM,
+    'file' => 'on_the_web.admin.inc',
   );
 
   return $items;
 }
 
 /**
- * Settings form.
+ * Implements hook_config_info().
  */
-function on_the_web_settings_form($form, &$form_state) {
-  $form = array();
-
-  $form['on_the_web_size'] = array(
-    '#type' => 'select',
-    '#title' => t('Icon size'),
-    '#options' => array(
-      'sm' => t('Small: 32px square'),
-      'lg' => t('Large: 64px square'),
-    ),
-    '#default_value' => array(variable_get('on_the_web_size', 'sm')),
-  );
-  $form['on_the_web_sitename'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Use <a href="!url">Site name</a> in link titles', array('!url' => url('admin/config/system/site-information'))),
-    '#default_value' => variable_get('on_the_web_sitename', TRUE),
-    '#description' => t('Unchecking this box will use "us" as the title attribute for these links, instead of <em>Find !us on Facebook</em>.', array('!us' => variable_get('site_name', 'Drupal'))),
-  );
-  $form['on_the_web_target'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Open links in new windows'),
-    '#default_value' => variable_get('on_the_web_target', TRUE),
-    '#description' => t('Unchecking this box his will remove the target="_blank" attribute from these links.'),
+function on_the_web_config_info() {
+  $prefixes['on_the_web.settings'] = array(
+    'label' => t('Links to social media sites, and their order.'),
+    'group' => t('On The Web'),
   );
 
-  // Get all the services.
-  $services = on_the_web_get_services();
-
-  foreach ($services as $service => $info) {
-    $weight = variable_get('on_the_web_' . $service . '_weight', 0);
-
-    $form['services'][$service] = array(
-      '#tree' => TRUE,
-      '#weight' => $weight,
-    );
-
-    $form['services'][$service]['name'] = array('#hidden' => $service);
-
-    $form['services'][$service]['title'] = array('#markup' => $info['name']);
-
-    $form['services'][$service]['weight'] = array(
-      '#type' => 'weight',
-      '#default_value' => $weight,
-    );
-
-    $form['services'][$service]['page'] = array(
-      '#type' => 'textfield',
-      '#default_value' => variable_get('on_the_web_' . $service . '_page', ''),
-    );
-  }
-
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Submit'));
-
-  return $form;
-}
-
-
-/**
- * Submit handler for on_the_web_settings_form().
- */
-function on_the_web_settings_form_submit($form, &$form_state) {
-  //dpm($form_state['values']);
-  $services = on_the_web_get_services();
-  foreach ($form_state['values'] as $key => $value) {
-    // Save the global (string) variables.
-    if (strstr($key, 'on_the_web')) {
-      variable_set($key, $value);
-    }
-
-    // Save the service (array) variables.
-    if (array_key_exists($key, $services)) {
-      foreach ($value as $name => $setting) {
-        variable_set('on_the_web_' . $key . '_' . $name, $setting);
-      }
-    }
-  }
+  return $prefixes;
 }
 
 /**
  * Implementation of hook_block_info().
  */
 function on_the_web_block_info() {
-  $blocks[0] = array(
+  $blocks['social_links'] = array(
     'info' => t('Social Media Icons'),
+    'description' => t('Icons that link to your social media presence On The Web.'),
   );
+
   return $blocks;
 }
 
 /**
  * Implementation of hook_block_configure().
  */
-function on_the_web_block_configure($delta = 0) {
+function on_the_web_block_configure($delta = 'social_links', $settings = array()) {
   $form = array();
-  if ($delta == 0) {
+  if ($delta == 'social_links') {
 
     $form['services'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Icons provided for the following services:'),
+      '#title' => t('Display icons for the following services:'),
       '#description' => t('The URL for each service must be entered on the OTW
         <a href="!url">settings page</a>.', array('!url' => url('admin/config/services/on_the_web'))),
     );
@@ -131,7 +65,7 @@ function on_the_web_block_configure($delta = 0) {
         'auto' => t('Automatic'),
         'manual' => t('Explicit'),
       ),
-      '#default_value' => variable_get('on_the_web_display', 'auto'),
+      '#default_value' => (isset($settings['display'])) ? $settings['display'] : 'auto',
     );
 
     // Add descriptions to the radio buttons.
@@ -145,19 +79,23 @@ function on_the_web_block_configure($delta = 0) {
     $services = on_the_web_get_services();
     $options = array();
     $defaults = array();
+    $config = config('on_the_web.settings');
     foreach ($services as $service => $info) {
-      // Check the box by default if the service has a URL.
-      $info['page'] = variable_get('on_the_web_' . $service . '_page', FALSE);
-      if ($info['page']) {
-        $info['weight'] = variable_get('on_the_web_' . $service . '_weight', 0);
+      $info['page'] = $config->get($service . '_page');
+
+      // If the service has a URL provided...
+      if ($info['page'] != '') {
+        // Add the option
         $options[$service] = $info;
+        // Check the box by default.
         $defaults[$service] = $service;
+        // Get the weight so we can sort.
+        $info['weight'] = $config->get($service . '_weight');
       }
     }
 
     // Sort the options on the block form to match weight.
-    uasort($options, 'drupal_sort_weight');
-
+    backdrop_sort($options);
     $sorted_options = array();
     foreach ($options as $service => $info) {
       $sorted_options[$service] = $info['name'];
@@ -168,11 +106,11 @@ function on_the_web_block_configure($delta = 0) {
         '#type' => 'checkboxes',
         '#title' => t('Icons'),
         '#options' => $sorted_options,
-        '#default_value' => variable_get('on_the_web_enabled', $defaults),
+        '#default_value' => (isset($settings['enabled'])) ? $settings['enabled'] : $defaults,
         '#description' => t('Please select the icons you would like displayed in this block.'),
         '#states' => array(
           'visible' => array(
-            ':input[name="display"]' => array('value' => 'manual'),
+            ':input[name="block_settings[services][display]"]' => array('value' => 'manual'),
           ),
         ),
       );
@@ -187,28 +125,13 @@ function on_the_web_block_configure($delta = 0) {
   return $form;
 }
 
- 
-/**
- * Implementation of hook_block_save().
- */
-function on_the_web_block_save($delta = 0, $edit = array()) {
-  // This example comes from node.module.
-  if ($delta == 0) {
-    variable_set('on_the_web_display', $edit['display']);
-    if ($edit['display'] == 'manual') {
-      variable_set('on_the_web_enabled', $edit['enabled']);
-    }
-  }
-}
- 
- 
 /**
  * Implementation of hook_block_view().
  */
-function on_the_web_block_view($delta = 0) {
+function on_the_web_block_view($delta = 'social_links', $settings = array(), $contexts = array()) {
   $block = array(
-    'subject' => t('Find Us On...'),
-    'content' => on_the_web_display_block($delta)
+    'subject' => NULL,
+    'content' => on_the_web_display_block($delta, $settings, $contexts),
   );
 
   return $block;
@@ -220,30 +143,31 @@ function on_the_web_block_view($delta = 0) {
  * @return
  *    Content for block.
  */
-function on_the_web_display_block($delta) {
+function on_the_web_display_block($delta, $settings = array(), $contexts = array()) {
+  $config = config('on_the_web.settings');
   $output = '';
 
   // Get the appropriate name to use in links.
-  if (variable_get('on_the_web_sitename', TRUE)) {
-    $name = variable_get('site_name', 'Drupal');
+  if ($config->get('sitename')) {
+    $name = config_get('system.core', 'site_name');
   }
   else {
-    $name = t('Us');
+    $name = t('us');
   }
 
   // Get the display style, and enabled icons.
-  $display = variable_get('on_the_web_display', 'auto');
+  $display = $settings['services']['display'];
   if ($display == 'manual') {
-    $enabled = variable_get('on_the_web_enabled', array());
+    $enabled = $settings['services']['enabled'];
   }
 
   $services = on_the_web_get_services();
 
   $links = array();
   foreach ($services as $service => $info) {
-    $link = variable_get('on_the_web_' . $service . '_page', FALSE);
+    $link = $config->get($service . '_page');
 
-    if (($display == 'auto' && $link) || 
+    if (($display == 'auto' && ($link != '')) || 
         ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
 
       if ($service != 'rss') {
@@ -253,24 +177,33 @@ function on_the_web_display_block($delta) {
         $title = t('!us RSS feed', array('!us' => $name));
       }
 
-      $weight = variable_get('on_the_web_' . $service . '_weight', FALSE);
-      $linked_image = theme('on_the_web_item', array('service' => $service, 'link' => $link, 'title' => $title));
-      $classes = array('on-the-web', 'otw-' . $service);
+      $size = $config->get('size');
+      $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
+      $weight = $config->get($service . '_weight');
 
       $links[] = array(
-        '#weight' => $weight,
-        '#theme' => 'on_the_web_icon',
-        '#linked_image' => $linked_image,
+        '#theme' => 'on_the_web_item',
+        '#service' => $service,
+        '#link' => $link,
+        '#title' => $title,
         '#classes' => $classes,
+        '#weight' => $weight,
+      );
+    }
+
+    $type = $config->get('type');
+    if ($type == 'anchor') {
+      $links['#attached'] = array(
+        'css' => array(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css'),
       );
     }
   }
 
-  return drupal_render($links);
+  return backdrop_render($links);
 }
 
 /**
- * Gets the available services.
+ * Helper function: Gets the available services.
  *
  * @return array
  *   List of services with icons.
@@ -293,7 +226,7 @@ function on_the_web_get_services() {
     'rss' => array('name' => 'RSS'),
   );
 
-  drupal_alter('on_the_web_get_services', $services);
+  backdrop_alter('on_the_web_get_services', $services);
 
   return $services;
 }
@@ -303,20 +236,18 @@ function on_the_web_get_services() {
  */
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
-    'on_the_web_settings_form' => array(
-      'render element' => 'form',
-      'file' => 'on_the_web.theme.inc',
-    ),
-    'on_the_web_icon' => array(
-      'variables' => array('linked_image' => NULL, 'classes' => NULL),
-      'file' => 'on_the_web.theme.inc',
-    ),
     'on_the_web_item' => array(
-      'variables' => array('service' => NULL, 'link' => NULL, 'title' => NULL),
+      'variables' => array('service' => NULL, 'link' => NULL, 'title' => NULL, 'classes' => array()),
       'file' => 'on_the_web.theme.inc',
     ),
     'on_the_web_image' => array(
       'variables' => array('service' => NULL, 'title' => NULL),
+      'file' => 'on_the_web.theme.inc',
+    ),
+
+    // Administration form.
+    'on_the_web_settings_form' => array(
+      'render element' => 'form',
       'file' => 'on_the_web.theme.inc',
     ),
   );

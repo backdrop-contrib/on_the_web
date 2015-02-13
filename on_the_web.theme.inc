@@ -7,25 +7,6 @@
 /**
  * Theme function
  *
- * @param $linked_image
- *    Linked icon.
- * @return 
- *    Linked image with wrapper markup.
- */
-function theme_on_the_web_icon($variables){
-  $linked_image = $variables['linked_image'];
-  $classes = $variables['classes'] ? ' class="' . implode(' ', $variables['classes']) . '"' : '';
-
-  if ($linked_image){
-    $output = '<span' . $classes . '>' . $linked_image . '</span>';
-    return $output;
-  }
-  return;
-}
-
-/**
- * Theme function
- *
  * @param $service
  *    Icon for appropriate service.
  * @param $link
@@ -40,21 +21,33 @@ function theme_on_the_web_item($variables) {
   $service = $variables['service'];
   $link = $variables['link'];
   $title = $variables['title'];
+  $classes = $variables['classes'];
 
-  // Build the img tag.
-  $image = theme('on_the_web_image', array('service' => $service, 'title' => $title));
+  $config = config('on_the_web.settings');
+  $type = $config->get('type');
+  $target = $config->get('target');
 
   // Determine attributes for the link
   $attributes  = array(
+    'class' => $classes,
     'title' => $title,
     'rel' => 'nofollow',
   );
-  if (variable_get('on_the_web_target', TRUE) == TRUE) {
+  if ($target == TRUE) {
     $attributes['target'] = '_blank';
+  }
+  $options = array('attributes' => $attributes);
+
+  if ($type == 'image') {
+    $inner = theme('on_the_web_image', array('service' => $service, 'title' => $title));
+    $options['html'] = TRUE;
+  }
+  else {
+    $inner = $title;
   }
 
   // Link the image and wrap it in a span.
-  $linked_image = l($image, $link, array('attributes' => $attributes, 'html' => TRUE));
+  $linked_image = l($inner, $link, $options);
 
   return $linked_image;
 }
@@ -75,11 +68,11 @@ function theme_on_the_web_image($variables) {
   $title = $variables['title'];
 
   // Get the size.
-  $size = variable_get('on_the_web_size', 'sm');
+  $size = config_get('on_the_web.settings', 'size');
 
   // Assemble necessary variables for building the image.
   $variables = array(
-    'path' => drupal_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png', 
+    'uri' => backdrop_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png', 
     'alt' => $title,
     'title' => $title,
   );
@@ -106,12 +99,12 @@ function theme_on_the_web_settings_form($variables) {
   foreach (element_children($form['services'], TRUE) as $service) {
     $row = array();
 
-    $row[] = drupal_render($form['services'][$service]['title']);
-    $row[] = drupal_render($form['services'][$service]['page']);
+    $row[] = backdrop_render($form['services'][$service]['title']);
+    $row[] = backdrop_render($form['services'][$service]['page']);
 
     // Now, render the weight row.
     $form['services'][$service]['weight']['#attributes']['class'][] = 'icon-weight';
-    $row[] = drupal_render($form['services'][$service]['weight']);
+    $row[] = backdrop_render($form['services'][$service]['weight']);
 
     // Add this row to our collection of rows, and give it the 'draggable' class.
     $rows[] = array(
@@ -127,11 +120,12 @@ function theme_on_the_web_settings_form($variables) {
   }
 
   // Pull out the submit button.
-  $submit = drupal_render($form['submit']);
+  $submit = backdrop_render($form['submit']);
   // Add the rest of the form elements on top.
-  $output = drupal_render_children($form) . $output . $submit;
+  $output = backdrop_render_children($form) . $output . $submit;
 
-  drupal_add_tabledrag('on-the-web-settings-table', 'order', 'self', 'icon-weight');
+  backdrop_add_tabledrag('on-the-web-settings-table', 'order', 'self', 'icon-weight');
+  backdrop_add_css(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.admin.css');
 
   return $output;
 }
