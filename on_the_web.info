@@ -1,4 +1,5 @@
 name = On The Web
+type = module
 description = Provides a block with social media icons linked to your other sources on the web.
 backdrop = 1.x
 configure = admin/config/services/on_the_web
