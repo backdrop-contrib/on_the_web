@@ -5,7 +5,19 @@
  */
 
 /**
- * Implementation of hook_block_info().
+ * Implements hook_config_info().
+ */
+function on_the_web_config_info() {
+  $prefixes['on_the_web.settings'] = array(
+    'label' => t('On The Web Settings'),
+    'group' => t('Configuration'),
+  );
+
+  return $prefixes;
+}
+
+/**
+ * Implements hook_block_info().
  */
 function on_the_web_menu() {
   $items['admin/config/services/on_the_web'] = array(
@@ -21,19 +33,7 @@ function on_the_web_menu() {
 }
 
 /**
- * Implements hook_config_info().
- */
-function on_the_web_config_info() {
-  $prefixes['on_the_web.settings'] = array(
-    'label' => t('Links to social media sites, and their order.'),
-    'group' => t('Configuration'),
-  );
-
-  return $prefixes;
-}
-
-/**
- * Implementation of hook_block_info().
+ * Implements hook_block_info().
  */
 function on_the_web_block_info() {
   $blocks['social_links'] = array(
@@ -45,7 +45,7 @@ function on_the_web_block_info() {
 }
 
 /**
- * Implementation of hook_block_configure().
+ * Implements hook_block_configure().
  */
 function on_the_web_block_configure($delta = 'social_links', $settings = array()) {
   $form = array();
@@ -126,7 +126,7 @@ function on_the_web_block_configure($delta = 'social_links', $settings = array()
 }
 
 /**
- * Implementation of hook_block_view().
+ * Implements hook_block_view().
  */
 function on_the_web_block_view($delta = 'social_links', $settings = array(), $contexts = array()) {
   $block = array(
@@ -158,7 +158,7 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
     $name = t('me');
   }
 
-  // Get the display style, and enabled icons.
+  // Get the display style.
   $display = $settings['services']['display'];
   if ($display == 'manual') {
     $enabled = $settings['services']['enabled'];
@@ -170,7 +170,7 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
   foreach ($services as $service => $info) {
     $link = $config->get($service . '_page');
 
-    if (($display == 'auto' && ($link != '')) || 
+    if (($display == 'auto' && ($link != '')) ||
         ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
 
       if ($service != 'rss') {
@@ -188,6 +188,8 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
         '#theme' => 'on_the_web_item',
         '#service' => $service,
         '#link' => $link,
+        '#icon' => $info['fa'],
+        '#size' => $size,
         '#title' => $title,
         '#classes' => $classes,
         '#weight' => $weight,
@@ -200,51 +202,30 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
         'css' => array(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css'),
       );
     }
+    elseif ($type == 'font') {
+      $links['#attached'] = array(
+        'css' => array('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array('external' => TRUE)),
+      );
+    }
   }
 
   return backdrop_render($links);
 }
 
 /**
- * Helper function: Gets the available services.
- *
- * @return array
- *   List of services with icons.
- */
-function on_the_web_get_services() {
-  $services = array(
-    'twitter' => array('name' => 'Twitter'),
-    'facebook' => array('name' => 'Facebook'),
-    'pinterest' => array('name' => 'Pinterest'),
-    'instagram' => array('name' => 'Instagram'),
-    'google' => array('name' => 'Google+'),
-    'youtube' => array('name' => 'YouTube'),
-    'flickr' => array('name' => 'Flickr'),
-    'myspace' => array('name' => 'MySpace'),
-    'linkedin' => array('name' => 'LinkedIn'),
-    'itunes' => array('name' => 'iTunes'),
-    'delicious' => array('name' => 'Delicious'),
-    'soundcloud' => array('name' => 'Soundcloud'),
-    'friendfeed' => array('name' => 'FriendFeed'),
-    'rss' => array('name' => 'RSS'),
-  );
-
-  backdrop_alter('on_the_web_get_services', $services);
-
-  return $services;
-}
-
-/**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function on_the_web_theme($existing, $type, $theme, $path) {
   return array(
     'on_the_web_item' => array(
-      'variables' => array('service' => NULL, 'link' => NULL, 'title' => NULL, 'classes' => array()),
-      'file' => 'on_the_web.theme.inc',
-    ),
-    'on_the_web_image' => array(
-      'variables' => array('service' => NULL, 'title' => NULL),
+      'variables' => array(
+        'service' => NULL,
+        'link' => NULL,
+        'icon' => 'fa-fort-awesome',
+        'size' => 'sm',
+        'title' => NULL,
+        'classes' => array(),
+      ),
       'file' => 'on_the_web.theme.inc',
     ),
 
@@ -254,4 +235,37 @@ function on_the_web_theme($existing, $type, $theme, $path) {
       'file' => 'on_the_web.theme.inc',
     ),
   );
+}
+
+/*******************************************************************************
+ * Untilty functions.
+*******************************************************************************/
+
+/**
+ * Gets the available services.
+ *
+ * @return array
+ *   List of services with icons.
+ */
+function on_the_web_get_services() {
+  $services = array(
+    'twitter' => array('name' => 'Twitter', 'fa' => 'fa-twitter-square'),
+    'facebook' => array('name' => 'Facebook', 'fa' => 'fa-facebook-square'),
+    'pinterest' => array('name' => 'Pinterest', 'fa' => 'fa-pinterest-square'),
+    'instagram' => array('name' => 'Instagram', 'fa' => 'fa-instagram'),
+    'google' => array('name' => 'Google+', 'fa' => 'fa-google-plus-square'),
+    'youtube' => array('name' => 'YouTube', 'fa' => 'fa-youtube-square'),
+    'flickr' => array('name' => 'Flickr', 'fa' => 'fa-flickr'),
+    'linkedin' => array('name' => 'LinkedIn', 'fa' => 'fa-linkedin-square'),
+    'myspace' => array('name' => 'MySpace', 'fa' => 'fa-user'),
+    'itunes' => array('name' => 'iTunes', 'fa' => 'fa-apple'),
+    'delicious' => array('name' => 'Delicious', 'fa' => 'fa-delicious'),
+    'soundcloud' => array('name' => 'Soundcloud', 'fa' => 'fa-soundcloud'),
+    'github' => array('name' => 'GitHub', 'fa' => 'fa-github-square'),
+    'rss' => array('name' => 'RSS', 'fa' => 'fa-rss-square'),
+  );
+
+  backdrop_alter('on_the_web_get_services', $services);
+
+  return $services;
 }

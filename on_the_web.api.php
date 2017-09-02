@@ -22,5 +22,5 @@ function hook_on_the_web_get_services_alter(&$services) {
   $services = array('facebook' => $face)+$services;
 
   // Add an additional service.
-  $services['soundcloud'] = array('name' => 'SoundCloud');
+  $services['github'] = array('name' => 'GitHub');
 }

@@ -15,6 +15,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Icon type'),
     '#options' => array(
+      'font' => t('FontAwesome icon font'),
       'anchor' => t('Background image on anchor'),
       'image' => t('Image tags in anchor'),
     ),
