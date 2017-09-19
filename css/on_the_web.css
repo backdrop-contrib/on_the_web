@@ -40,9 +40,6 @@ a.otw-sm.otw-delicious {
 a.otw-sm.otw-soundcloud {
   background: transparent url(../images/sm/soundcloud.png) no-repeat top left;
 }
-a.otw-sm.otw-friendfeed {
-  background: transparent url(../images/sm/friendfeed.png) no-repeat top left;
-}
 
 /* Set the background images - small size */
 a.otw-lg.otw-twitter {
@@ -80,9 +77,6 @@ a.otw-lg.otw-delicious {
 }
 a.otw-lg.otw-soundcloud {
   background: transparent url(../images/lg/soundcloud.png) no-repeat top left;
-}
-a.otw-lg.otw-friendfeed {
-  background: transparent url(../images/lg/friendfeed.png) no-repeat top left;
 }
 
 /* Set the size */

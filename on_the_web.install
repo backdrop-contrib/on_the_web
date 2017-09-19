@@ -5,6 +5,16 @@
  */
 
 /**
+ * Remove FriendFeed.
+ */
+function on_the_web_update_1001() {
+  $config = config('on_the_web.settings');
+  $config->clear('friendfeed_page');
+  $config->clear('friendfeed_weight');
+  $config->save();
+}
+
+/**
  * Move settings from variables to config.
  */
 function on_the_web_update_1000() {
