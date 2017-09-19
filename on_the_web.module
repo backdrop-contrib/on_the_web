@@ -167,7 +167,7 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
   foreach ($services as $service => $info) {
     $link = $config->get($service . '_page');
 
-    if (($display == 'auto' && ($link != '')) || 
+    if (($display == 'auto' && ($link != '')) ||
         ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
 
       if ($service != 'rss') {
@@ -222,7 +222,6 @@ function on_the_web_get_services() {
     'itunes' => array('name' => 'iTunes'),
     'delicious' => array('name' => 'Delicious'),
     'soundcloud' => array('name' => 'Soundcloud'),
-    'friendfeed' => array('name' => 'FriendFeed'),
     'rss' => array('name' => 'RSS'),
   );
 
