@@ -17,6 +17,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#options' => array(
       'anchor' => t('Background image on anchor'),
       'image' => t('Image tags in anchor'),
+      'icon' => t('Font Awesome icon'),
     ),
     '#default_value' => $config->get('type'),
   );
@@ -28,6 +29,14 @@ function on_the_web_settings_form($form, &$form_state) {
       'lg' => t('Large: 64px square'),
     ),
     '#default_value' => $config->get('size'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="type"]' => array(
+          array('value' => 'anchor'),
+          array('value' => 'image'),
+        ),
+      ),
+    ),
   );
   $form['target'] = array(
     '#type' => 'checkbox',
