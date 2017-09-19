@@ -42,6 +42,9 @@ function theme_on_the_web_item($variables) {
     $inner = theme('on_the_web_image', array('service' => $service, 'title' => $title));
     $options['html'] = TRUE;
   }
+  elseif ($type == 'icon') {
+    $inner = '';
+  }
   else {
     $inner = $title;
   }
@@ -60,7 +63,7 @@ function theme_on_the_web_item($variables) {
  * @param $title
  *    Title attribute for the link tag.
  *
- * @return 
+ * @return
  *    Icon image of appropriate size.
  */
 function theme_on_the_web_image($variables) {
@@ -72,7 +75,7 @@ function theme_on_the_web_image($variables) {
 
   // Assemble necessary variables for building the image.
   $variables = array(
-    'uri' => backdrop_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png', 
+    'uri' => backdrop_get_path('module', 'on_the_web') . '/images/' . $size . '/' . $service . '.png',
     'alt' => $title,
     'title' => $title,
   );

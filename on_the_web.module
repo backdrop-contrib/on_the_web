@@ -145,6 +145,7 @@ function on_the_web_block_view($delta = 'social_links', $settings = array(), $co
  */
 function on_the_web_display_block($delta, $settings = array(), $contexts = array()) {
   $config = config('on_the_web.settings');
+  $type = $config->get('type');
   $output = '';
 
   // Get the appropriate name to use in links.
@@ -167,7 +168,7 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
   foreach ($services as $service => $info) {
     $link = $config->get($service . '_page');
 
-    if (($display == 'auto' && ($link != '')) || 
+    if (($display == 'auto' && ($link != '')) ||
         ($display == 'manual' && array_key_exists($service, $enabled) && $enabled[$service] === $service)) {
 
       if ($service != 'rss') {
@@ -177,8 +178,13 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
         $title = t('!us RSS feed', array('!us' => $name));
       }
 
-      $size = $config->get('size');
-      $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
+      if ($type != 'icon') {
+        $size = $config->get('size');
+        $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
+      }
+      else {
+        $classes = array('on-the-web', 'otw-' . $service, 'fa', $info['icon']);
+      }
       $weight = $config->get($service . '_weight');
 
       $links[] = array(
@@ -191,11 +197,19 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
       );
     }
 
-    $type = $config->get('type');
     if ($type == 'anchor') {
-      $links['#attached'] = array(
-        'css' => array(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css'),
+      $links['#attached']['css'][] = backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css';
+    }
+    elseif ($type == 'icon') {
+      $links['#attached']['css']['a.on-the-web {margin: 0 0.2em;}'] = array(
+        'type' => 'inline',
       );
+
+      if (!module_exists('font-awesome')) {
+        $links['#attached']['css']['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'] = array(
+          'type' => 'external',
+        );
+      }
     }
   }
 
@@ -210,20 +224,62 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
  */
 function on_the_web_get_services() {
   $services = array(
-    'twitter' => array('name' => 'Twitter'),
-    'facebook' => array('name' => 'Facebook'),
-    'pinterest' => array('name' => 'Pinterest'),
-    'instagram' => array('name' => 'Instagram'),
-    'google' => array('name' => 'Google+'),
-    'youtube' => array('name' => 'YouTube'),
-    'flickr' => array('name' => 'Flickr'),
-    'myspace' => array('name' => 'MySpace'),
-    'linkedin' => array('name' => 'LinkedIn'),
-    'itunes' => array('name' => 'iTunes'),
-    'delicious' => array('name' => 'Delicious'),
-    'soundcloud' => array('name' => 'Soundcloud'),
-    'friendfeed' => array('name' => 'FriendFeed'),
-    'rss' => array('name' => 'RSS'),
+    'twitter' => array(
+      'name' => 'Twitter',
+      'icon' => 'fa-twitter',
+    ),
+    'facebook' => array(
+      'name' => 'Facebook',
+      'icon' => 'fa-facebook',
+    ),
+    'pinterest' => array(
+      'name' => 'Pinterest',
+      'icon' => 'fa-pinterest',
+    ),
+    'instagram' => array(
+      'name' => 'Instagram',
+      'icon' => 'fa-instagram',
+    ),
+    'google' => array(
+      'name' => 'Google+',
+      'icon' => 'fa-google-plus',
+    ),
+    'youtube' => array(
+      'name' => 'YouTube',
+      'icon' => 'fa-youtube',
+    ),
+    'flickr' => array(
+      'name' => 'Flickr',
+      'icon' => 'fa-flickr',
+    ),
+    'myspace' => array(
+      'name' => 'MySpace',
+      'icon' => 'exclamation-triangle',
+    ),
+    'linkedin' => array(
+      'name' => 'LinkedIn',
+      'icon' => 'fa-linkedin',
+    ),
+    'itunes' => array(
+      'name' => 'iTunes',
+      'icon' => 'exclamation-triangle',
+    ),
+    'delicious' => array(
+      'name' => 'Delicious',
+      'icon' => 'fa-delicious',
+    ),
+    'soundcloud' => array(
+      'name' => 'Soundcloud',
+      'icon' => 'fa-soundcloud',
+    ),
+    'friendfeed' => array(
+      'name' => 'FriendFeed',
+      'icon' => 'exclamation-triangle',
+    ),
+    'rss' => array(
+      'name' => 'RSS',
+      'icon' => 'fa-rss',
+    ),
   );
 
   backdrop_alter('on_the_web_get_services', $services);
