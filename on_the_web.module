@@ -240,6 +240,10 @@ function on_the_web_get_services() {
       'name' => 'Instagram',
       'icon' => 'fa-instagram',
     ),
+    'github' => array(
+      'name' => 'GitHub',
+      'icon' => 'fa-github',
+    ),
     'google' => array(
       'name' => 'Google+',
       'icon' => 'fa-google-plus',
