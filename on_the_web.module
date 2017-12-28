@@ -148,11 +148,14 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
   $output = '';
 
   // Get the appropriate name to use in links.
-  if ($config->get('sitename')) {
+  if ($config->get('sitename') == 1) {
     $name = config_get('system.core', 'site_name');
   }
-  else {
+  elseif ($config->get('sitename') == 0) {
     $name = t('us');
+  }
+  elseif ($config->get('sitename') == 2) {
+    $name = t('me');
   }
 
   // Get the display style, and enabled icons.
