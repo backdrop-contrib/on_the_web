@@ -256,10 +256,6 @@ function on_the_web_get_services() {
       'name' => 'Flickr',
       'icon' => 'fa-flickr',
     ),
-    'myspace' => array(
-      'name' => 'MySpace',
-      'icon' => 'exclamation-triangle',
-    ),
     'linkedin' => array(
       'name' => 'LinkedIn',
       'icon' => 'fa-linkedin',
