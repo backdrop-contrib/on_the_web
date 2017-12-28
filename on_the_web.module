@@ -276,10 +276,6 @@ function on_the_web_get_services() {
       'name' => 'Soundcloud',
       'icon' => 'fa-soundcloud',
     ),
-    'friendfeed' => array(
-      'name' => 'FriendFeed',
-      'icon' => 'exclamation-triangle',
-    ),
     'rss' => array(
       'name' => 'RSS',
       'icon' => 'fa-rss',
