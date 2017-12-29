@@ -297,6 +297,10 @@ function on_the_web_get_services() {
       'name' => 'Delicious',
       'fa-icon' => 'fa-delicious',
     ),
+    'lastfm' => array(
+      'name' => 'LastFM',
+      'fa-icon' => 'fa-lastfm-square',
+    ),
     'soundcloud' => array(
       'name' => 'Soundcloud',
       'fa-icon' => 'fa-soundcloud',
