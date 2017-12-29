@@ -269,6 +269,10 @@ function on_the_web_get_services() {
       'name' => 'Instagram',
       'fa-icon' => 'fa-instagram',
     ),
+    'github' => array(
+      'name' => 'GitHub',
+      'fa-icon' => 'fa-github-square',
+    ),
     'google' => array(
       'name' => 'Google+',
       'fa-icon' => 'fa-google-plus-square',
