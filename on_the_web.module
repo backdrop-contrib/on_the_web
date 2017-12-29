@@ -145,6 +145,7 @@ function on_the_web_block_view($delta = 'social_links', $settings = array(), $co
  */
 function on_the_web_display_block($delta, $settings = array(), $contexts = array()) {
   $config = config('on_the_web.settings');
+  $type = $config->get('type');
   $output = '';
 
   // Get the appropriate name to use in links.
@@ -182,30 +183,33 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
 
       $size = $config->get('size');
       $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
-      $weight = $config->get($service . '_weight');
 
       $links[] = array(
         '#theme' => 'on_the_web_item',
         '#service' => $service,
         '#link' => $link,
-        '#icon' => $info['fa'],
+        '#icon' => $info['fa-icon'],
         '#size' => $size,
         '#title' => $title,
         '#classes' => $classes,
-        '#weight' => $weight,
+        '#weight' => $config->get($service . '_weight'),
       );
     }
 
-    $type = $config->get('type');
     if ($type == 'anchor') {
-      $links['#attached'] = array(
-        'css' => array(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css'),
-      );
+      $links['#attached']['css'][] = backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css';
     }
     elseif ($type == 'font') {
-      $links['#attached'] = array(
-        'css' => array('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array('external' => TRUE)),
-      );
+      if (!module_exists('font-awesome')) {
+        $links['#attached']['css']['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'] = array(
+          'type' => 'external',
+        );
+      }
+      else {
+        $links['#attached'] = array(
+          'css' => array('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array('external' => TRUE)),
+        );
+      }
     }
   }
 
@@ -249,20 +253,62 @@ function on_the_web_theme($existing, $type, $theme, $path) {
  */
 function on_the_web_get_services() {
   $services = array(
-    'twitter' => array('name' => 'Twitter', 'fa' => 'fa-twitter-square'),
-    'facebook' => array('name' => 'Facebook', 'fa' => 'fa-facebook-square'),
-    'pinterest' => array('name' => 'Pinterest', 'fa' => 'fa-pinterest-square'),
-    'instagram' => array('name' => 'Instagram', 'fa' => 'fa-instagram'),
-    'google' => array('name' => 'Google+', 'fa' => 'fa-google-plus-square'),
-    'youtube' => array('name' => 'YouTube', 'fa' => 'fa-youtube-square'),
-    'flickr' => array('name' => 'Flickr', 'fa' => 'fa-flickr'),
-    'linkedin' => array('name' => 'LinkedIn', 'fa' => 'fa-linkedin-square'),
-    'myspace' => array('name' => 'MySpace', 'fa' => 'fa-user'),
-    'itunes' => array('name' => 'iTunes', 'fa' => 'fa-apple'),
-    'delicious' => array('name' => 'Delicious', 'fa' => 'fa-delicious'),
-    'soundcloud' => array('name' => 'Soundcloud', 'fa' => 'fa-soundcloud'),
-    'github' => array('name' => 'GitHub', 'fa' => 'fa-github-square'),
-    'rss' => array('name' => 'RSS', 'fa' => 'fa-rss-square'),
+    'twitter' => array(
+      'name' => 'Twitter',
+      'fa-icon' => 'fa-twitter-square',
+    ),
+    'facebook' => array(
+      'name' => 'Facebook',
+      'fa-icon' => 'fa-facebook-square',
+    ),
+    'pinterest' => array(
+      'name' => 'Pinterest',
+      'fa-icon' => 'fa-pinterest-square',
+    ),
+    'instagram' => array(
+      'name' => 'Instagram',
+      'fa-icon' => 'fa-instagram',
+    ),
+    'google' => array(
+      'name' => 'Google+',
+      'fa-icon' => 'fa-google-plus-square',
+    ),
+    'youtube' => array(
+      'name' => 'YouTube',
+      'fa-icon' => 'fa-youtube-square',
+    ),
+    'flickr' => array(
+      'name' => 'Flickr',
+      'fa-icon' => 'fa-flickr',
+    ),
+    'linkedin' => array(
+      'name' => 'LinkedIn',
+      'fa-icon' => 'fa-linkedin-square',
+    ),
+    'myspace' => array(
+      'name' => 'MySpace',
+      'fa-icon' => 'fa-user',
+    ),
+    'itunes' => array(
+      'name' => 'iTunes',
+      'fa-icon' => 'fa-apple',
+    ),
+    'delicious' => array(
+      'name' => 'Delicious',
+      'fa-icon' => 'fa-delicious',
+    ),
+    'soundcloud' => array(
+      'name' => 'Soundcloud',
+      'fa-icon' => 'fa-soundcloud',
+    ),
+    'github' => array(
+      'name' => 'GitHub',
+      'fa-icon' => 'fa-github-square',
+    ),
+    'rss' => array(
+      'name' => 'RSS',
+      'fa-icon' => 'fa-rss-square',
+    ),
   );
 
   backdrop_alter('on_the_web_get_services', $services);

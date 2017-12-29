@@ -42,21 +42,15 @@ function theme_on_the_web_item($variables) {
 
   $icon_classes = array('fa', $icon, 'fa-fw');
   if ($size == 'lg') {
+    $icon_classes[] = 'fa-3x';
+  }
+  else {
     $icon_classes[] = 'fa-2x';
   }
 
   $text = '<i class="' . implode(' ', $icon_classes) . '"></i>';
 
-  // Special hack for myspace, three user icons instead.
-  if ($service == 'myspace') {
-    $text .= '<i class="fa ' . $icon . ' fa-fw" style="margin-left: -1.33em"></i>';
-    $text .= '<i class="fa ' . $icon . ' fa-fw" style="margin-left: -1.66em"></i>';
-  }
-
-  // Link the image and wrap it in a span.
-  $linked_image = l($text, $link, $options);
-
-  return $linked_image;
+  return l($text, $link, $options);
 }
 
 /**

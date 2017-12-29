@@ -25,16 +25,10 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Icon size'),
     '#options' => array(
-      'sm' => t('Small: 32px square'),
-      'lg' => t('Large: 64px square'),
+      'sm' => t('Small: ~32px square'),
+      'lg' => t('Large: ~64px square'),
     ),
     '#default_value' => $config->get('size'),
-  );
-  $form['target'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Open links in new windows'),
-    '#default_value' => $config->get('target'),
-    '#description' => t('Unchecking this box his will remove the target="_blank" attribute from each link.'),
   );
   $form['sitename'] = array(
     '#type' => 'radios',
@@ -46,6 +40,12 @@ function on_the_web_settings_form($form, &$form_state) {
       0 => t('Use <strong>us</strong>, for example: <em>Find us on Facebook</em>'),
       2 => t('Use <strong>me</strong>, for example: <em>Find me on Facebook</em>'),
     ),
+  );
+  $form['target'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Open links in new windows'),
+    '#default_value' => $config->get('target'),
+    '#description' => t('Unchecking this box his will remove the target="_blank" attribute from each link.'),
   );
 
   // Get all the services.
