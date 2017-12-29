@@ -289,10 +289,6 @@ function on_the_web_get_services() {
       'name' => 'LinkedIn',
       'fa-icon' => 'fa-linkedin-square',
     ),
-    'myspace' => array(
-      'name' => 'MySpace',
-      'fa-icon' => 'fa-user',
-    ),
     'itunes' => array(
       'name' => 'iTunes',
       'fa-icon' => 'fa-apple',
