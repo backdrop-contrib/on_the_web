@@ -21,6 +21,16 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
     '#default_value' => $config->get('type'),
   );
+  $form['square'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Use 'square' icons."),
+    '#default_value' => $config->get('square'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="type"]' => array('value' => 'font'),
+      ),
+    ),
+  );
   $form['size'] = array(
     '#type' => 'radios',
     '#title' => t('Icon size'),
@@ -87,6 +97,7 @@ function on_the_web_settings_form_submit($form, &$form_state) {
 
   $config = config('on_the_web.settings');
   $config->set('type', $form_state['values']['type']);
+  $config->set('square', $form_state['values']['square']);
   $config->set('size', $form_state['values']['size']);
   $config->set('sitename', $form_state['values']['sitename']);
   $config->set('target', $form_state['values']['target']);
