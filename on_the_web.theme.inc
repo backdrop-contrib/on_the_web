@@ -40,7 +40,16 @@ function theme_on_the_web_item($variables) {
   }
   $options = array('attributes' => $attributes, 'html' => TRUE);
 
-  $icon_classes = array('fa', $icon, 'fa-fw');
+  // Add the font awesome icon classes with support for v5.
+  $icon_classes = array($icon, 'fa-fw');
+  if (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5') {
+    $icon_classes[] = 'fab';
+  }
+  else {
+    $icon_classes[] = 'fa';
+  }
+
+  // Add the font awesome size classes.
   if ($size == 'lg') {
     $icon_classes[] = 'fa-3x';
   }

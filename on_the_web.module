@@ -200,14 +200,9 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
       $links['#attached']['css'][] = backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.css';
     }
     elseif ($type == 'font') {
-      if (!module_exists('font-awesome')) {
+      if (!module_exists('font_awesome')) {
         $links['#attached']['css']['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'] = array(
           'type' => 'external',
-        );
-      }
-      else {
-        $links['#attached'] = array(
-          'css' => array('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', array('external' => TRUE)),
         );
       }
     }
