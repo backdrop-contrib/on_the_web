@@ -184,11 +184,18 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
       $size = $config->get('size');
       $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
 
+      $icon = $info['fa-icon'];
+      if ($config->get('type') == 'font' && $config->get('square') == TRUE) {
+        if (isset($info['fa-icon-square'])) {
+          $icon = $info['fa-icon-square'];
+        }
+      }
+
       $links[] = array(
         '#theme' => 'on_the_web_item',
         '#service' => $service,
         '#link' => $link,
-        '#icon' => $info['fa-icon'],
+        '#icon' => $icon,
         '#size' => $size,
         '#title' => $title,
         '#classes' => $classes,
@@ -253,15 +260,18 @@ function on_the_web_get_services() {
   $services = array(
     'twitter' => array(
       'name' => 'Twitter',
-      'fa-icon' => 'fa-twitter-square',
+      'fa-icon' => 'fa-twitter',
+      'fa-icon-square' => 'fa-twitter-square',
     ),
     'facebook' => array(
       'name' => 'Facebook',
-      'fa-icon' => 'fa-facebook-square',
+      'fa-icon' => 'fa-facebook',
+      'fa-icon-square' => 'fa-facebook-square',
     ),
     'pinterest' => array(
       'name' => 'Pinterest',
-      'fa-icon' => 'fa-pinterest-square',
+      'fa-icon' => 'fa-pinterest',
+      'fa-icon-square' => 'fa-pinterest-square',
     ),
     'instagram' => array(
       'name' => 'Instagram',
@@ -269,15 +279,17 @@ function on_the_web_get_services() {
     ),
     'github' => array(
       'name' => 'GitHub',
-      'fa-icon' => 'fa-github-square',
+      'fa-icon' => 'fa-github',
+      'fa-icon-square' => 'fa-github-square',
     ),
     'google' => array(
       'name' => 'Google+',
-      'fa-icon' => 'fa-google-plus-square',
+      'fa-icon' => 'fa-google-plus',
+      'fa-icon-square' => 'fa-google-plus-square',
     ),
     'youtube' => array(
       'name' => 'YouTube',
-      'fa-icon' => 'fa-youtube-square',
+      'fa-icon' => 'fa-youtube',
     ),
     'flickr' => array(
       'name' => 'Flickr',
@@ -285,7 +297,7 @@ function on_the_web_get_services() {
     ),
     'linkedin' => array(
       'name' => 'LinkedIn',
-      'fa-icon' => 'fa-linkedin-square',
+      'fa-icon' => 'fa-linkedin',
     ),
     'itunes' => array(
       'name' => 'Podcast',
@@ -297,19 +309,17 @@ function on_the_web_get_services() {
     ),
     'lastfm' => array(
       'name' => 'LastFM',
-      'fa-icon' => 'fa-lastfm-square',
+      'fa-icon' => 'fa-lastfm',
+      'fa-icon-square' => 'fa-lastfm-square',
     ),
     'soundcloud' => array(
       'name' => 'Soundcloud',
       'fa-icon' => 'fa-soundcloud',
     ),
-    'github' => array(
-      'name' => 'GitHub',
-      'fa-icon' => 'fa-github-square',
-    ),
     'rss' => array(
       'name' => 'RSS',
-      'fa-icon' => 'fa-rss-square',
+      'fa-icon' => 'fa-rss',
+      'fa-icon-square' => 'fa-rss-square',
     ),
   );
 
