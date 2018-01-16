@@ -290,6 +290,7 @@ function on_the_web_get_services() {
     'youtube' => array(
       'name' => 'YouTube',
       'fa-icon' => 'fa-youtube',
+      'fa-icon-square' => 'fa-youtube-square',
     ),
     'flickr' => array(
       'name' => 'Flickr',
@@ -298,6 +299,7 @@ function on_the_web_get_services() {
     'linkedin' => array(
       'name' => 'LinkedIn',
       'fa-icon' => 'fa-linkedin',
+      'fa-icon-square' => 'fa-linkedin-square',
     ),
     'itunes' => array(
       'name' => 'Podcast',
