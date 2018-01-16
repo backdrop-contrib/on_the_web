@@ -213,6 +213,9 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
     }
   }
 
+  // Add an alter here.
+  backdrop_alter('on_the_web_links', $links);
+
   return backdrop_render($links);
 }
 
@@ -290,7 +293,7 @@ function on_the_web_get_services() {
       'fa-icon' => 'fa-linkedin-square',
     ),
     'itunes' => array(
-      'name' => 'iTunes',
+      'name' => 'Podcast',
       'fa-icon' => 'fa-apple',
     ),
     'delicious' => array(
