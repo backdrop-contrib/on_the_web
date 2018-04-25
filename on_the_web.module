@@ -73,7 +73,7 @@ function on_the_web_block_configure($delta = 'social_links', $settings = array()
       '#description' => t('Show all icons that have corresponding links entered.'),
     );
     $form['services']['display']['manual'] = array(
-      '#description' => t('Explicity choose icons here.'),
+      '#description' => t('Explicitly choose icons here.'),
     );
 
     $services = on_the_web_get_services();
