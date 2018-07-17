@@ -184,7 +184,10 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
       $size = $config->get('size');
       $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
 
-      $icon = $info['fa-icon'];
+      $icon = FALSE;
+      if (isset($info['fa-icon'])) {
+        $icon = $info['fa-icon'];
+      }
       if ($config->get('type') == 'font' && $config->get('square') == TRUE) {
         if (isset($info['fa-icon-square'])) {
           $icon = $info['fa-icon-square'];
@@ -195,12 +198,14 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
         '#theme' => 'on_the_web_item',
         '#service' => $service,
         '#link' => $link,
-        '#icon' => $icon,
         '#size' => $size,
         '#title' => $title,
         '#classes' => $classes,
         '#weight' => $config->get($service . '_weight'),
       );
+      if ($icon) {
+        $links['#icon'] = $icon;
+      }
     }
 
     if ($type == 'anchor') {
