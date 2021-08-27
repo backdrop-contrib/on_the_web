@@ -178,7 +178,16 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
         $title = t('Find !us on !service', array('!us' => $name, '!service' => $info['name']));
       }
       else {
-        $title = t('!us RSS feed', array('!us' => $name));
+        if ($config->get('sitename') == 1) {
+          $rss_name = $name;
+        }
+        elseif ($config->get('sitename') == 0) {
+          $rss_name = t('Our');
+        }
+        elseif ($config->get('sitename') == 2) {
+          $rss_name = t('My');
+        }
+        $title = t('!us RSS feed', array('!us' => $rss_name));
       }
 
       $size = $config->get('size');
