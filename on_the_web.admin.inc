@@ -45,14 +45,12 @@ function on_the_web_settings_form($form, &$form_state) {
       'icons_url' => 'http://forkaweso.me/Fork-Awesome/icons',
       'description' => t('The FontAwesome Fork'),
     ),
-    /* @todo Support FA5?
     'fontawesome_5' => array(
       'key' => '5.x.x',
-      'label' => 'FontAwesome 5.x',
+      'label' => 'FontAwesome 5.x (requires registration)',
       'icons_url' => 'https://fontawesome.com/v5.15/icons',
       'description' => t('The latest version of FontAwesome. <a href=":faurl">FontAwesome account</a> Required.', array(':faurl' => 'https://fontawesome.com/start')),
     ),
-    */
   );
 
   $form['version'] = array(
@@ -75,23 +73,24 @@ function on_the_web_settings_form($form, &$form_state) {
 
   $form['version']['#options'] = $source_options;
 
-  /* @todo Support FA5?
   $form['kit_hash'] = array(
     '#type' => 'textfield',
-    '#title' => t('FontAwesome Kit Hash'),
+    '#title' => t('FontAwesome 5.x Kit Hash'),
+    '#field_prefix' => 'https://kit.fontawesome.com/',
+    '#field_suffix' => '.js',
+    '#size' => 20,
     '#default_value' => $config->get('kit_hash'),
     '#attributes' => array(
       'placeholder' => 'abcdefghij',
     ),
-    '#description' => t('In order to use FontAwesome 5 you must <a href=":faurl">register your email address</a> to recieve a kit.'),
+    '#description' => t('A 10-digit hash from the FontAwesome Kit code. <a href=":faurl">Register with FontAwesome</a> to generate a Kit.'),
     '#states' => array(
       'visible' => array(
         ':input[name="type"]' => array('value' => 'font'),
-        ':input[name="version"]' => array('value' => '5.0.0'),
+        ':input[name="version"]' => array('value' => '5.x.x'),
       ),
     ),
   );
-  */
 
   $form['size'] = array(
     '#type' => 'radios',
@@ -160,6 +159,8 @@ function on_the_web_settings_form_submit($form, &$form_state) {
   $config = config('on_the_web.settings');
   $config->set('type', $form_state['values']['type']);
   $config->set('square', $form_state['values']['square']);
+  $config->set('version', $form_state['values']['version']);
+  $config->set('kit_hash', $form_state['values']['kit_hash']);
   $config->set('size', $form_state['values']['size']);
   $config->set('sitename', $form_state['values']['sitename']);
   $config->set('target', $form_state['values']['target']);
