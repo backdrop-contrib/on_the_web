@@ -31,6 +31,68 @@ function on_the_web_settings_form($form, &$form_state) {
       ),
     ),
   );
+
+  $sources = array(
+    'fontawesome' => array(
+      'key' => '4.7.0',
+      'label' => 'FontAwesome 4.7.0',
+      'icons_url' => 'https://fontawesome.com/v4.7/icons',
+      'description' => t('The last Open Source version of FontAwesome'),
+    ),
+    'forkawesome' => array(
+      'key' => '1.2.0',
+      'label' => 'ForkAwesome 1.2.0',
+      'icons_url' => 'http://forkaweso.me/Fork-Awesome/icons',
+      'description' => t('The FontAwesome Fork'),
+    ),
+    /* @todo Support FA5?
+    'fontawesome_5' => array(
+      'key' => '5.x.x',
+      'label' => 'FontAwesome 5.x',
+      'icons_url' => 'https://fontawesome.com/v5.15/icons',
+      'description' => t('The latest version of FontAwesome. <a href=":faurl">FontAwesome account</a> Required.', array(':faurl' => 'https://fontawesome.com/start')),
+    ),
+    */
+  );
+
+  $form['version'] = array(
+    '#type' => 'radios',
+    '#title' => t('FontAwesome Version'),
+    '#default_value' => $config->get('version'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="type"]' => array('value' => 'font'),
+      ),
+    ),
+  );
+
+  $source_options = array();
+  foreach ($sources as $source) {
+    $icons_link = l('see icons', $source['icons_url']);
+    $source_options[$source['key']] = $source['label'] . ' &mdash; ' . $icons_link;
+    $form['version']['key']['#description'] = $source['description'];
+  }
+
+  $form['version']['#options'] = $source_options;
+
+  /* @todo Support FA5?
+  $form['kit_hash'] = array(
+    '#type' => 'textfield',
+    '#title' => t('FontAwesome Kit Hash'),
+    '#default_value' => $config->get('kit_hash'),
+    '#attributes' => array(
+      'placeholder' => 'abcdefghij',
+    ),
+    '#description' => t('In order to use FontAwesome 5 you must <a href=":faurl">register your email address</a> to recieve a kit.'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="type"]' => array('value' => 'font'),
+        ':input[name="version"]' => array('value' => '5.0.0'),
+      ),
+    ),
+  );
+  */
+
   $form['size'] = array(
     '#type' => 'radios',
     '#title' => t('Icon size'),
