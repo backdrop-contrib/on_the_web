@@ -42,7 +42,10 @@ function theme_on_the_web_item($variables) {
 
   // Add the font awesome icon classes with support for v5.
   $icon_classes = array($icon, 'fa-fw');
-  if (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5') {
+
+  if ((!module_exists('font_awesome') && $config->get('version') == '5.x.x')
+     || (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5')) {
+
     if ($service == 'rss') {
       $icon_classes[] = 'fas';
     }
