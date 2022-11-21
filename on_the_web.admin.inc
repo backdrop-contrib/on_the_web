@@ -15,19 +15,28 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Icon type'),
     '#options' => array(
-      'font' => t('FontAwesome icon font'),
-      'anchor' => t('Background image on anchor'),
-      'image' => t('Image tags in anchor'),
+      'font' => t('Icon font tags'),
+      'anchor' => t('CSS background SVGs'),
+      'image' => t('Image tags (legacy images)'),
     ),
     '#default_value' => $config->get('type'),
+    'font' => array(
+      '#description' => t('Various optios for Icon fonts will be provided below.'),
+    ),
+    'anchor' => array(
+      '#description' => t('SVG icons will approximately match the icon fonts.'),
+    ),
+    'image' => array(
+      '#description' => t('Note: Not all icons are available as images. This option will be rmeoved in a future version of this module.'),
+    ),
   );
   $form['square'] = array(
     '#type' => 'checkbox',
-    '#title' => t("Use 'square' icons."),
+    '#title' => t("Use 'square' icons when available."),
     '#default_value' => $config->get('square'),
     '#states' => array(
-      'visible' => array(
-        ':input[name="type"]' => array('value' => 'font'),
+      'invisible' => array(
+        ':input[name="type"]' => array('value' => 'image'),
       ),
     ),
   );
@@ -35,27 +44,27 @@ function on_the_web_settings_form($form, &$form_state) {
   $sources = array(
     'fontawesome' => array(
       'key' => '4.7.0',
-      'label' => 'FontAwesome 4.7.0',
+      'label' => 'FontAwesome version 4.7.0',
       'icons_url' => 'https://fontawesome.com/v4.7/icons',
       'description' => t('The last Open Source version of FontAwesome'),
     ),
     'forkawesome' => array(
       'key' => '1.2.0',
-      'label' => 'ForkAwesome 1.2.0',
+      'label' => 'ForkAwesome version 1.2.0',
       'icons_url' => 'http://forkaweso.me/Fork-Awesome/icons',
       'description' => t('The FontAwesome Fork'),
     ),
     'fontawesome_5' => array(
       'key' => '5.x.x',
-      'label' => 'FontAwesome 5.x (requires registration)',
+      'label' => 'FontAwesome version 5.x (requires registration)',
       'icons_url' => 'https://fontawesome.com/v5.15/icons',
       'description' => t('The latest version of FontAwesome. <a href=":faurl">FontAwesome account</a> Required.', array(':faurl' => 'https://fontawesome.com/start')),
     ),
   );
-
+  
   $form['version'] = array(
     '#type' => 'radios',
-    '#title' => t('FontAwesome Version'),
+    '#title' => t('Icon Font and Version'),
     '#default_value' => $config->get('version'),
     '#states' => array(
       'visible' => array(

@@ -194,18 +194,31 @@ function on_the_web_display_block($delta, $settings = array(), $contexts = array
       $classes = array('on-the-web', 'otw-' . $size, 'otw-' . $service);
 
       $icon = FALSE;
-      if ($config->get('type') == 'font') {
-        if (isset($info['fa-icon'])) {
-          $icon = $info['fa-icon'];
-        }
-        // Only use a square icon if it exists.
-        if ($config->get('square') == TRUE && isset($info['fa-icon-square'])) {
-          $icon = $info['fa-icon-square'];
-
-          if ($config->get('version') == '5.x.x' && $service == 'linkedin') {
+      // Select the appropriate source data.
+      $type = $config->get('type');
+      switch ($type) {
+        case 'font':
+          if (isset($info['fa-icon'])) {
             $icon = $info['fa-icon'];
           }
-        }
+          // Only use a square icon if it exists.
+          if ($config->get('square') == TRUE && isset($info['fa-icon-square'])) {
+            $icon = $info['fa-icon-square'];
+
+            if ($config->get('version') == '5.x.x' && $service == 'linkedin') {
+              $icon = $info['fa-icon'];
+            }
+          }
+          break;
+        case 'image':
+          if (isset($info['image'])) {
+            $path = backdrop_get_path('module', 'on_the_web');
+            $icon = base_path() . $path . '/images/' . $size . '/' . $info['image'];
+          }
+          break;
+        case 'anchor':
+          // Intentionally empty. We can use the classes provided.
+          break;
       }
 
       $links[] = array(
@@ -301,6 +314,7 @@ function on_the_web_get_services() {
       'name' => 'Twitter',
       'fa-icon' => 'fa-twitter',
       'fa-icon-square' => 'fa-twitter-square',
+      'image' => 'twitter.png',
     ),
     'mastodon' => array(
       'name' => 'Mastodon',
@@ -311,47 +325,57 @@ function on_the_web_get_services() {
       'name' => 'Facebook',
       'fa-icon' => 'fa-facebook',
       'fa-icon-square' => 'fa-facebook-square',
+      'image' => 'facebook.png',
     ),
     'pinterest' => array(
       'name' => 'Pinterest',
       'fa-icon' => 'fa-pinterest',
       'fa-icon-square' => 'fa-pinterest-square',
+      'image' => 'pinterest.png',
     ),
     'instagram' => array(
       'name' => 'Instagram',
       'fa-icon' => 'fa-instagram',
+      'image' => 'instagram.png',
     ),
     'github' => array(
       'name' => 'GitHub',
       'fa-icon' => 'fa-github',
       'fa-icon-square' => 'fa-github-square',
+      'image' => 'github.png',
     ),
     'google' => array(
       'name' => 'Google+',
       'fa-icon' => 'fa-google-plus',
       'fa-icon-square' => 'fa-google-plus-square',
+      'image' => 'google.png',
     ),
     'youtube' => array(
       'name' => 'YouTube',
       'fa-icon' => 'fa-youtube',
       'fa-icon-square' => 'fa-youtube-square',
+      'image' => 'youtube.png',
     ),
     'flickr' => array(
       'name' => 'Flickr',
       'fa-icon' => 'fa-flickr',
+      'image' => 'flickr.png',
     ),
     'linkedin' => array(
       'name' => 'LinkedIn',
       'fa-icon' => 'fa-linkedin',
       'fa-icon-square' => 'fa-linkedin-square',
+      'image' => 'flickr.png',
     ),
     'itunes' => array(
       'name' => 'Podcast',
       'fa-icon' => 'fa-podcast',
+      'image' => 'itunes.png',
     ),
     'delicious' => array(
       'name' => 'Delicious',
       'fa-icon' => 'fa-delicious',
+      'image' => 'delicious.png',
     ),
     'lastfm' => array(
       'name' => 'LastFM',
@@ -361,11 +385,13 @@ function on_the_web_get_services() {
     'soundcloud' => array(
       'name' => 'Soundcloud',
       'fa-icon' => 'fa-soundcloud',
+      'image' => 'soundcloud.png',
     ),
     'rss' => array(
       'name' => 'RSS Feed',
       'fa-icon' => 'fa-rss',
       'fa-icon-square' => 'fa-rss-square',
+      'image' => 'rss.png',
     ),
     'envelope' => array(
       'name' => 'Newsletter (or Contact)',

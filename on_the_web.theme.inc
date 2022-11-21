@@ -42,32 +42,39 @@ function theme_on_the_web_item($variables) {
   }
   $options = array('attributes' => $attributes, 'html' => TRUE);
 
-  // Add the font awesome icon classes with support for v5.
-  $icon_classes = array($icon, 'fa-fw');
+  $text = '';
+  if ($type == 'font') {
+    // Add the font awesome icon classes with support for v5.
+    $icon_classes = array($icon, 'fa-fw');
 
-  if ((!module_exists('font_awesome') && $config->get('version') == '5.x.x')
-     || (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5')) {
+    if ((!module_exists('font_awesome') && $config->get('version') == '5.x.x')
+       || (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5')) {
 
-    if ($service == 'rss') {
-      $icon_classes[] = 'fas';
+      if ($service == 'rss') {
+        $icon_classes[] = 'fas';
+      }
+      else {
+        $icon_classes[] = 'fab';
+      }
     }
     else {
-      $icon_classes[] = 'fab';
+      $icon_classes[] = 'fa';
     }
-  }
-  else {
-    $icon_classes[] = 'fa';
+
+    // Add the font awesome size classes.
+    if ($size == 'lg') {
+      $icon_classes[] = 'fa-3x';
+    }
+    else {
+      $icon_classes[] = 'fa-2x';
+    }
+
+    $text = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
   }
 
-  // Add the font awesome size classes.
-  if ($size == 'lg') {
-    $icon_classes[] = 'fa-3x';
+  elseif ($type == 'image') {
+    $text = '<img src="' . $icon . '" />';
   }
-  else {
-    $icon_classes[] = 'fa-2x';
-  }
-
-  $text = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
 
   return l($text, $link, $options);
 }
@@ -114,7 +121,6 @@ function theme_on_the_web_settings_form($variables) {
   $output = backdrop_render_children($form) . $output . $submit;
 
   backdrop_add_tabledrag('on-the-web-settings-table', 'order', 'self', 'icon-weight');
-  backdrop_add_css(backdrop_get_path('module', 'on_the_web') . '/css/on_the_web.admin.css');
 
   return $output;
 }
