@@ -358,9 +358,14 @@ function on_the_web_get_services() {
       'fa-icon' => 'fa-soundcloud',
     ),
     'rss' => array(
-      'name' => 'RSS',
+      'name' => 'RSS Feed',
       'fa-icon' => 'fa-rss',
       'fa-icon-square' => 'fa-rss-square',
+    ),
+    'envelope' => array(
+      'name' => 'Newsletter (or Contact)',
+      'fa-icon' => 'fa-envelope',
+      'fa-icon-square' => 'fa-envelope-square',
     ),
   );
 
