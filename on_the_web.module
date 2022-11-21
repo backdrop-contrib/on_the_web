@@ -347,7 +347,7 @@ function on_the_web_get_services() {
     ),
     'itunes' => array(
       'name' => 'Podcast',
-      'fa-icon' => 'fa-apple',
+      'fa-icon' => 'fa-podcast',
     ),
     'delicious' => array(
       'name' => 'Delicious',
