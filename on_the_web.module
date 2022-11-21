@@ -302,6 +302,11 @@ function on_the_web_get_services() {
       'fa-icon' => 'fa-twitter',
       'fa-icon-square' => 'fa-twitter-square',
     ),
+    'mastodon' => array(
+      'name' => 'Mastodon',
+      'fa-icon' => 'fa-mastodon',
+      'fa-icon-square' => 'fa-mastodon-square',
+    ),
     'facebook' => array(
       'name' => 'Facebook',
       'fa-icon' => 'fa-facebook',
