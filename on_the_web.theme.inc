@@ -33,10 +33,12 @@ function theme_on_the_web_item($variables) {
   $attributes  = array(
     'class' => $link_classes,
     'title' => $title,
+    'aria-label' => $title,
     'rel' => 'nofollow',
   );
   if ($target == TRUE) {
     $attributes['target'] = '_blank';
+    $attributes['aria-label'] .= ' (' . t('opens in new window') . ')';
   }
   $options = array('attributes' => $attributes, 'html' => TRUE);
 
@@ -65,7 +67,7 @@ function theme_on_the_web_item($variables) {
     $icon_classes[] = 'fa-2x';
   }
 
-  $text = '<i class="' . implode(' ', $icon_classes) . '"></i>';
+  $text = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
 
   return l($text, $link, $options);
 }
