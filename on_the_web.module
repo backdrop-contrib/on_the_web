@@ -347,7 +347,7 @@ function on_the_web_get_services() {
     ),
     'facebook' => array(
       'name' => 'Facebook',
-      'fa-icon' => 'fa-facebook',
+      'fa-icon' => 'fa-facebook-f',
       'fa-icon-square' => 'fa-facebook-square',
       'v5style' => 'fab', // Brand
       'image' => 'facebook.png',

@@ -16,18 +16,18 @@ function on_the_web_settings_form($form, &$form_state) {
     '#title' => t('Icon type'),
     '#options' => array(
       'font' => t('Icon font tags'),
-      'anchor' => t('CSS background SVGs'),
-      'image' => t('Image tags (legacy images)'),
+      'anchor' => t('SVGs as CSS background images'),
+      'image' => t('Legacy image tags (may appear blurry)'),
     ),
     '#default_value' => $config->get('type'),
     'font' => array(
-      '#description' => t('Various optios for Icon fonts will be provided below.'),
+      '#description' => t('Options for icon font variations are provided below.'),
     ),
     'anchor' => array(
       '#description' => t('SVG icons will approximately match the icon fonts.'),
     ),
     'image' => array(
-      '#description' => t('Note: Not all icons are available as images. This option will be rmeoved in a future version of this module.'),
+      '#description' => t('Note: Not all icons are available as legacy images. This option will be rmeoved in the future.'),
     ),
   );
   $form['square'] = array(
@@ -75,7 +75,7 @@ function on_the_web_settings_form($form, &$form_state) {
 
   $source_options = array();
   foreach ($sources as $source) {
-    $icons_link = l('see icons', $source['icons_url']);
+    $icons_link = l('see all icons', $source['icons_url']);
     $source_options[$source['key']] = $source['label'] . ' &mdash; ' . $icons_link;
     $form['version']['key']['#description'] = $source['description'];
   }
@@ -128,6 +128,8 @@ function on_the_web_settings_form($form, &$form_state) {
     '#description' => t('Unchecking this box his will remove the target="_blank" attribute from each link.'),
   );
 
+  $path = backdrop_get_path('module', 'on_the_web');
+
   // Get all the services.
   $services = on_the_web_get_services();
 
@@ -142,6 +144,66 @@ function on_the_web_settings_form($form, &$form_state) {
     $form['services'][$service]['name'] = array('#hidden' => $service);
 
     $form['services'][$service]['title'] = array('#markup' => $info['name']);
+
+    $svg = array();
+    if (isset($info['svg'])) {
+      $src = base_path() . $path . '/images/svgs/' . $info['svg'];
+      $svg = array('#markup' => '<img src="' . $src . '" style="max-width: 2em; max-height: 2em;" />');
+    }
+    $form['services'][$service]['svg'] = $svg;
+
+    $type = $config->get('type');
+    if ($type == 'font') {
+      $version = $config->get('version');
+      switch ($version) {
+        case '1.2.0':
+          $fork_icon = array();
+          if (isset($info['fa-icon'])) {
+            $icon_classes = array('fa', 'fa-2x', $info['fa-icon']);
+            $itag = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
+            $fork_icon = array('#markup' => $itag);
+          }
+          $form['services'][$service]['fork'] = $fork_icon;
+
+          $fork_url = 'https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css';
+          $form['#attached']['css'][$fork_url] = array('type' => 'external');
+          break;
+        case '5.x.x':
+          $hash = $config->get('kit_hash');
+          if (!empty($hash)) {
+            $font_js_url = 'https://kit.fontawesome.com/' . $hash . '.js';
+            $form['#attached']['js'][$font_js_url] = array('type' => 'external');
+
+            $fav5_icon = array();
+            if (isset($info['fa-icon'])) {
+              $icon_classes = array($info['v5style'], 'fa-2x', $info['fa-icon']);
+              $itag = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
+              $fav5_icon = array('#markup' => $itag);
+            }
+            $form['services'][$service]['fav5'] = $fav5_icon;
+          }
+          break;
+        case '4.7.0':
+          $fav4_icon = array();
+          if (isset($info['fa-icon'])) {
+            $icon_classes = array('fa', 'fa-2x', $info['fa-icon']);
+            $itag = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
+            $fav4_icon = array('#markup' => $itag);
+          }
+          $form['services'][$service]['fav4'] = $fav4_icon;
+
+          $font_url = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+          $form['#attached']['css'][$font_url] = array('type' => 'external');
+          break;
+      }
+    }
+
+    $legacy = array();
+    if (isset($info['image'])) {
+      $src = base_path() . $path . '/images/sm/' . $info['image'];
+      $legacy = array('#markup' => '<img src="' . $src . '" />');
+    }
+    $form['services'][$service]['legacy'] = $legacy;
 
     $form['services'][$service]['weight'] = array(
       '#type' => 'weight',

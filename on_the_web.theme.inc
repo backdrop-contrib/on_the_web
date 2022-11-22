@@ -95,12 +95,28 @@ function theme_on_the_web_settings_form($variables) {
   $form = $variables['form'];
   $rows = array();
   $disabled_rows = array();
+  $version = config_get('on_the_web.settings', 'version');
 
   foreach (element_children($form['services'], TRUE) as $service) {
     $row = array();
 
     $row[] = backdrop_render($form['services'][$service]['title']);
     $row[] = backdrop_render($form['services'][$service]['page']);
+    $row[] = backdrop_render($form['services'][$service]['svg']);
+
+    switch ($version) {
+      case '1.2.0':
+        $row[] = backdrop_render($form['services'][$service]['fork']);
+        break;
+      case '5.x.x':
+        $row[] = backdrop_render($form['services'][$service]['fav5']);
+        break;
+      case '4.7.0':
+        $row[] = backdrop_render($form['services'][$service]['fav4']);
+        break;
+    }
+
+    $row[] = backdrop_render($form['services'][$service]['legacy']); // Legacy
 
     // Now, render the weight row.
     $form['services'][$service]['weight']['#attributes']['class'][] = 'icon-weight';
@@ -115,8 +131,33 @@ function theme_on_the_web_settings_form($variables) {
 
   $output = '';
   if (count($rows)) {
-    $header = array(t('Icon'), t('URL'), t('Weight'));
-    $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'on-the-web-settings-table')));
+    $header = array(
+      t('Icon'), 
+      t('URL'), 
+      t('SVG'),      
+    );
+
+    switch ($version) {
+      case '1.2.0':
+        $header[] = t('ForkAwesome');
+        break;
+      case '5.x.x':
+        $header[] = t('FA v5');
+        break;
+      case '4.7.0':
+        $header[] = t('FA v4');
+        break;
+    }
+
+    $header[] = t('Legacy');
+    $header[] = t('Weight');
+
+    $variables = array(
+      'header' => $header,
+      'rows' => $rows, 
+      'attributes' => array('id' => 'on-the-web-settings-table'),
+    );
+    $output .= theme('table', $variables);
   }
 
   // Pull out the submit button.
