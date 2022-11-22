@@ -379,15 +379,6 @@ function on_the_web_get_services() {
       'svg' => 'github.svg',
       'svg-square' => 'github-square.svg',
     ),
-    'google' => array(
-      'name' => 'Google+',
-      'fa-icon' => 'fa-google-plus',
-      'fa-icon-square' => 'fa-google-plus-square',
-      'v5style' => 'fab', // Brand
-      'image' => 'google.png',
-      'svg' => 'google-plus-g.svg',
-      'svg-square' => 'google-plus-square.svg',
-    ),
     'youtube' => array(
       'name' => 'YouTube',
       'fa-icon' => 'fa-youtube',
