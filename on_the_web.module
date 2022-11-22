@@ -379,6 +379,12 @@ function on_the_web_get_services() {
       'svg' => 'github.svg',
       'svg-square' => 'github-square.svg',
     ),
+    'tiktok' => array(
+      'name' => 'TikTok',
+      'fa-icon' => 'fa-tiktok',
+      'v5style' => 'fab', // Brand
+      'svg' => 'tiktok.svg',
+    ),
     'youtube' => array(
       'name' => 'YouTube',
       'fa-icon' => 'fa-youtube',
