@@ -161,7 +161,7 @@ function theme_on_the_web_settings_form($variables) {
   }
 
   // Pull out the submit button.
-  $submit = backdrop_render($form['submit']);
+  $submit = backdrop_render($form['actions']);
   // Add the rest of the form elements on top.
   $output = backdrop_render_children($form) . $output . $submit;
 

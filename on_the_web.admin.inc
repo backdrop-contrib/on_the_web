@@ -11,7 +11,13 @@ function on_the_web_settings_form($form, &$form_state) {
   $config = config('on_the_web.settings');
   $form = array();
 
-  $form['type'] = array(
+  $form['settngs'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('On The Web - Settings'),
+    '#collapsible' => TRUE,
+  );
+
+  $form['settngs']['type'] = array(
     '#type' => 'radios',
     '#title' => t('Icon type'),
     '#options' => array(
@@ -30,7 +36,7 @@ function on_the_web_settings_form($form, &$form_state) {
       '#description' => t('Note: Not all icons are available as legacy images. This option will be rmeoved in the future.'),
     ),
   );
-  $form['square'] = array(
+  $form['settngs']['square'] = array(
     '#type' => 'checkbox',
     '#title' => t("Use 'square' icons when available."),
     '#default_value' => $config->get('square'),
@@ -62,7 +68,7 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
   );
   
-  $form['version'] = array(
+  $form['settngs']['version'] = array(
     '#type' => 'radios',
     '#title' => t('Icon Font and Version'),
     '#default_value' => $config->get('version'),
@@ -80,9 +86,9 @@ function on_the_web_settings_form($form, &$form_state) {
     $form['version']['key']['#description'] = $source['description'];
   }
 
-  $form['version']['#options'] = $source_options;
+  $form['settngs']['version']['#options'] = $source_options;
 
-  $form['kit_hash'] = array(
+  $form['settngs']['kit_hash'] = array(
     '#type' => 'textfield',
     '#title' => t('FontAwesome 5.x Kit Hash'),
     '#field_prefix' => 'https://kit.fontawesome.com/',
@@ -101,7 +107,7 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
   );
 
-  $form['size'] = array(
+  $form['settngs']['size'] = array(
     '#type' => 'radios',
     '#title' => t('Icon size'),
     '#options' => array(
@@ -110,7 +116,7 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
     '#default_value' => $config->get('size'),
   );
-  $form['sitename'] = array(
+  $form['settngs']['sitename'] = array(
     '#type' => 'radios',
     '#title' => 'Hover text selection',
     '#default_value' => (int)$config->get('sitename'),
@@ -121,7 +127,7 @@ function on_the_web_settings_form($form, &$form_state) {
       2 => t('Use <strong>me</strong>, for example: <em>Find me on Facebook</em>'),
     ),
   );
-  $form['target'] = array(
+  $form['settngs']['target'] = array(
     '#type' => 'checkbox',
     '#title' => t('Open links in new windows'),
     '#default_value' => $config->get('target'),
@@ -132,7 +138,6 @@ function on_the_web_settings_form($form, &$form_state) {
 
   // Get all the services.
   $services = on_the_web_get_services();
-
   foreach ($services as $service => $info) {
     $weight = $config->get($service . '_weight');
 
@@ -216,7 +221,10 @@ function on_the_web_settings_form($form, &$form_state) {
     );
   }
 
-  $form['submit'] = array('#type' => 'submit', '#value' => t('Submit'));
+  $form['actions'] = array(
+    '#type' => 'actions',
+  );
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Submit'));
 
   return $form;
 }
