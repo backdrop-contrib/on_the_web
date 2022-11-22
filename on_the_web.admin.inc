@@ -13,7 +13,7 @@ function on_the_web_settings_form($form, &$form_state) {
 
   $form['settngs'] = array(
     '#type' => 'fieldset',
-    '#title' => t('On The Web - Settings'),
+    '#title' => t('Display Options'),
     '#collapsible' => TRUE,
   );
 
@@ -150,21 +150,47 @@ function on_the_web_settings_form($form, &$form_state) {
 
     $form['services'][$service]['title'] = array('#markup' => $info['name']);
 
+    $square = $config->get('square');
     $svg = array();
     if (isset($info['svg'])) {
-      $src = base_path() . $path . '/images/svgs/' . $info['svg'];
+      // Only use a square icon if it exists.
+      if ($square == TRUE && isset($info['svg-square'])) {
+        $src = base_path() . $path . '/images/svgs/' . $info['svg-square'];
+      } 
+      else {
+        $src = base_path() . $path . '/images/svgs/' . $info['svg'];
+      }
       $svg = array('#markup' => '<img src="' . $src . '" style="max-width: 2em; max-height: 2em;" />');
     }
     $form['services'][$service]['svg'] = $svg;
 
+    
     $type = $config->get('type');
     if ($type == 'font') {
       $version = $config->get('version');
+      $icon_classes = array();
+
+      if ($version != '5.x.x') {
+        $icon_classes = array('fa');
+      }
+
+      $icon_classes[] = 'fa-2x';
+      // Only use a square icon if it exists.
+      if ($square == TRUE && isset($info['fa-icon-square'])) {
+        $icon_classes[] = $info['fa-icon-square'];
+        if ($version == '5.x.x' && $service == 'linkedin') {
+          // Exception for LinkedIn whicn uses a non-square icon in v5.
+          $icon_classes[] = $info['fa-icon'];
+        }
+      }
+      else {
+        $icon_classes[] = $info['fa-icon'];
+      }
+
       switch ($version) {
         case '1.2.0':
           $fork_icon = array();
           if (isset($info['fa-icon'])) {
-            $icon_classes = array('fa', 'fa-2x', $info['fa-icon']);
             $itag = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
             $fork_icon = array('#markup' => $itag);
           }
@@ -191,7 +217,6 @@ function on_the_web_settings_form($form, &$form_state) {
         case '4.7.0':
           $fav4_icon = array();
           if (isset($info['fa-icon'])) {
-            $icon_classes = array('fa', 'fa-2x', $info['fa-icon']);
             $itag = '<i aria-hidden="true" class="' . implode(' ', $icon_classes) . '"></i>';
             $fav4_icon = array('#markup' => $itag);
           }
