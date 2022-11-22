@@ -42,12 +42,6 @@ function on_the_web_settings_form($form, &$form_state) {
   );
 
   $sources = array(
-    'fontawesome' => array(
-      'key' => '4.7.0',
-      'label' => 'FontAwesome version 4.7.0',
-      'icons_url' => 'https://fontawesome.com/v4.7/icons',
-      'description' => t('The last Open Source version of FontAwesome'),
-    ),
     'forkawesome' => array(
       'key' => '1.2.0',
       'label' => 'ForkAwesome version 1.2.0',
@@ -59,6 +53,12 @@ function on_the_web_settings_form($form, &$form_state) {
       'label' => 'FontAwesome version 5.x (requires registration)',
       'icons_url' => 'https://fontawesome.com/v5.15/icons',
       'description' => t('The latest version of FontAwesome. <a href=":faurl">FontAwesome account</a> Required.', array(':faurl' => 'https://fontawesome.com/start')),
+    ),
+    'fontawesome' => array(
+      'key' => '4.7.0',
+      'label' => 'FontAwesome version 4.7.0',
+      'icons_url' => 'https://fontawesome.com/v4.7/icons',
+      'description' => t('The last Open Source version of FontAwesome'),
     ),
   );
   
@@ -92,7 +92,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => 'abcdefghij',
     ),
-    '#description' => t('A 10-digit hash from the FontAwesome Kit code. <a href=":faurl">Register with FontAwesome</a> to generate a Kit.'),
+    '#description' => t('A 10-digit hash from the FontAwesome Kit code. <a href=":faurl">Register with FontAwesome</a> to generate a Kit.', array(':faurl' => '')),
     '#states' => array(
       'visible' => array(
         ':input[name="type"]' => array('value' => 'font'),

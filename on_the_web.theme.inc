@@ -24,13 +24,14 @@ function theme_on_the_web_item($variables) {
   $size = $variables['size'];
   $title = $variables['title'];
   $link_classes = $variables['classes'];
+  $icon_classes = $variables['icon_classes'];
 
   $config = config('on_the_web.settings');
   $type = $config->get('type');
   $target = $config->get('target');
 
   // Determine attributes for the link
-  $attributes  = array(
+  $attributes = array(
     'class' => $link_classes,
     'title' => $title,
     'aria-label' => $title,
@@ -40,20 +41,17 @@ function theme_on_the_web_item($variables) {
     $attributes['target'] = '_blank';
     $attributes['aria-label'] .= ' (' . t('opens in new window') . ')';
   }
-  $options = array('attributes' => $attributes, 'html' => TRUE);
 
   $text = '';
   if ($type == 'font') {
     // Add the font awesome icon classes with support for v5.
-    $icon_classes = array($icon, 'fa-fw');
+    $icon_classes[] = $icon;
+    $icon_classes[] = 'fa-fw';
 
     if ((!module_exists('font_awesome') && $config->get('version') == '5.x.x')
        || (module_exists('font_awesome') && config_get('font_awesome.settings', 'fontawesome') == 'v5')) {
 
-      if ($service == 'rss') {
-        $icon_classes[] = 'fas';
-      }
-      else {
+      if (!in_array('fas', $icon_classes)) {
         $icon_classes[] = 'fab';
       }
     }
@@ -76,6 +74,12 @@ function theme_on_the_web_item($variables) {
     $text = '<img src="' . $icon . '" />';
   }
 
+  elseif ($type == 'anchor') {
+    $style = 'background: transparent url(' . $icon . ') no-repeat top left;';
+    $attributes['style'] = $style;
+  }
+
+  $options = array('attributes' => $attributes, 'html' => TRUE);
   return l($text, $link, $options);
 }
 
