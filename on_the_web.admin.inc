@@ -15,6 +15,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Display Options'),
     '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   $form['settngs']['type'] = array(
@@ -258,8 +259,6 @@ function on_the_web_settings_form($form, &$form_state) {
  * Submit handler for on_the_web_settings_form().
  */
 function on_the_web_settings_form_submit($form, &$form_state) {
-  $services = on_the_web_get_services();
-
   $config = config('on_the_web.settings');
   $config->set('type', $form_state['values']['type']);
   $config->set('square', $form_state['values']['square']);
@@ -269,6 +268,7 @@ function on_the_web_settings_form_submit($form, &$form_state) {
   $config->set('sitename', $form_state['values']['sitename']);
   $config->set('target', $form_state['values']['target']);
 
+  $services = on_the_web_get_services();
   foreach ($services as $name => $info) {
     $config->set($name . '_page', $form_state['values'][$name]['page']);
     $config->set($name . '_weight', $form_state['values'][$name]['weight']);
