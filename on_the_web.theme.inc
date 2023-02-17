@@ -23,8 +23,8 @@ function theme_on_the_web_item($variables) {
   $icon = $variables['icon'];
   $size = $variables['size'];
   $title = $variables['title'];
-  $link_classes = $variables['classes'];
-  $icon_classes = $variables['icon_classes'];
+  $link_classes = !empty($variables['classes'])? $variables['classes'] : array();
+  $icon_classes = !empty($variables['icon_classes'])? $variables['icon_classes'] : array();
 
   $config = config('on_the_web.settings');
   $type = $config->get('type');
