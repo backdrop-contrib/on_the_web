@@ -9,6 +9,7 @@
  */
 function on_the_web_settings_form($form, &$form_state) {
   $config = config('on_the_web.settings');
+  $size_setting = $config->get('size');
   $form = array();
 
   $form['settngs'] = array(
@@ -22,24 +23,24 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'radios',
     '#title' => t('Icon type'),
     '#options' => array(
+      'icon' => t('SVG icons'),
       'font' => t('Icon font tags'),
-      'anchor' => t('SVGs as CSS background images'),
-      'image' => t('Legacy image tags (may appear blurry)'),
+      'anchor' => t('SVGs as CSS background images (legacy)'),
     ),
     '#default_value' => $config->get('type'),
+    'icon' => array(
+      '#description' => t('SVG icons are from the Backdrop core Icon API.'),
+    ),
     'font' => array(
       '#description' => t('Options for icon font variations are provided below.'),
     ),
     'anchor' => array(
       '#description' => t('SVG icons will approximately match the icon fonts.'),
     ),
-    'image' => array(
-      '#description' => t('Note: Not all icons are available as legacy images. This option will be rmeoved in the future.'),
-    ),
   );
   $form['settngs']['square'] = array(
     '#type' => 'checkbox',
-    '#title' => t("Use 'square' icons when available."),
+    '#title' => t("Use 'filled' or 'square' icons when available."),
     '#default_value' => $config->get('square'),
     '#states' => array(
       'invisible' => array(
@@ -115,7 +116,7 @@ function on_the_web_settings_form($form, &$form_state) {
       'sm' => t('Small: ~32px square'),
       'lg' => t('Large: ~64px square'),
     ),
-    '#default_value' => $config->get('size'),
+    '#default_value' => $size_setting,
   );
   $form['settngs']['sitename'] = array(
     '#type' => 'radios',
@@ -136,6 +137,14 @@ function on_the_web_settings_form($form, &$form_state) {
   );
 
   $path = backdrop_get_path('module', 'on_the_web');
+  $css_path = $path . '/css/on_the_web.css';
+  $form['services'] = array(
+    '#attached' => array('css' => array($css_path)),
+  );
+
+  // Get the relevant settings.
+  $square = $config->get('square');
+  $size = $config->get('size');
 
   // Get all the services.
   $services = on_the_web_get_services();
@@ -151,19 +160,37 @@ function on_the_web_settings_form($form, &$form_state) {
 
     $form['services'][$service]['title'] = array('#markup' => $info['name']);
 
-    $square = $config->get('square');
-    $svg = array();
-    if (isset($info['svg'])) {
-      // Only use a square icon if it exists.
-      if ($square == TRUE && isset($info['svg-square'])) {
-        $src = base_path() . $path . '/images/svgs/' . $info['svg-square'];
-      } 
-      else {
-        $src = base_path() . $path . '/images/svgs/' . $info['svg'];
-      }
-      $svg = array('#markup' => '<img src="' . $src . '" style="max-width: 2em; max-height: 2em;" />');
+    $icon = array();
+    if (isset($info['icon'])) {
+      $svg_settings = array(
+        'icon_classes' => array(),
+        'alt' => '',
+        'size' => $size,
+        'square' => $square,
+        'type' => 'icon',
+      );
+      $icon = otw_build_svg_renderable($info['icon'], $svg_settings);
     }
-    $form['services'][$service]['svg'] = $svg;
+    $form['services'][$service]['icon'] = $icon;
+
+    $legacy = array();
+    if (isset($info['svg'])) {
+      if ($square == TRUE && isset($info['svg-square'])) {
+        $legacy_icon = 'otw-' . str_replace('.svg', '', $info['svg-square']);
+      }
+      else {
+        $legacy_icon = 'otw-' . str_replace('.svg', '', $info['svg']);
+      }
+      $svg_settings = array(
+        'icon_classes' => array(),
+        'alt' => '',
+        'size' => $size,
+        'square' => $square,
+        'type' => 'legacy',
+      );
+      $legacy = otw_build_svg_renderable($legacy_icon, $svg_settings);
+    }
+    $form['services'][$service]['svg'] = $legacy;
 
     
     $type = $config->get('type');
@@ -175,7 +202,13 @@ function on_the_web_settings_form($form, &$form_state) {
         $icon_classes = array('fa');
       }
 
-      $icon_classes[] = 'fa-2x';
+      if ($size == 'sm') {
+        $icon_classes[] = 'fa-2x';
+      }
+      elseif ($size == 'lg') {
+        $icon_classes[] = 'fa-4x';
+      }
+
       // Only use a square icon if it exists.
       if ($square == TRUE && isset($info['fa-icon-square'])) {
         $icon_classes[] = $info['fa-icon-square'];
@@ -228,13 +261,6 @@ function on_the_web_settings_form($form, &$form_state) {
           break;
       }
     }
-
-    $legacy = array();
-    if (isset($info['image'])) {
-      $src = base_path() . $path . '/images/sm/' . $info['image'];
-      $legacy = array('#markup' => '<img src="' . $src . '" />');
-    }
-    $form['services'][$service]['legacy'] = $legacy;
 
     $form['services'][$service]['weight'] = array(
       '#type' => 'weight',
