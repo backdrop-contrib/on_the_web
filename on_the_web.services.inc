@@ -21,7 +21,7 @@ function on_the_web_get_services() {
       'v5style' => 'fab', // Brand
       'svg' => 'bluesky.svg',
       'svg-square' => 'bluesky-square.svg',
-      'icon' => 'butterfly',
+      'icon' => 'butterfly-fill',
     ),
     'delicious' => array(
       'name' => 'Delicious',
