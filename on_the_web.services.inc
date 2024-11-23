@@ -14,22 +14,21 @@
 function on_the_web_get_services() {
   $services = array(
     /* Icons that are the FontAwesome "Brand" style. */
-    'twitter' => array(
-      'name' => 'Twitter',
-      'fa-icon' => 'fa-twitter',
-      'fa-icon-square' => 'fa-twitter-square',
+    'bluesky' => array(
+      'name' => 'Bluesky',
+      'fa-icon' => 'fa-bluesky',
+      'fa-icon-square' => 'fa-bluesky-square',
       'v5style' => 'fab', // Brand
-      'svg' => 'twitter.svg',
-      'svg-square' => 'twitter-square.svg',
-      'icon' => 'twitter-logo-fill',
+      'svg' => 'bluesky.svg',
+      'svg-square' => 'bluesky-square.svg',
+      'icon' => 'butterfly',
     ),
-    'mastodon' => array(
-      'name' => 'Mastodon',
-      'fa-icon' => 'fa-mastodon',
-      'fa-icon-square' => 'fa-mastodon-square',
+    'delicious' => array(
+      'name' => 'Delicious',
+      'fa-icon' => 'fa-delicious',
       'v5style' => 'fab', // Brand
-      'svg' => 'mastodon.svg',
-      'icon' => 'mastodon-logo-fill',
+      'svg' => 'delicious.svg',
+      'icon' => 'checkerboard-fill',
     ),
     'facebook' => array(
       'name' => 'Facebook',
@@ -40,22 +39,12 @@ function on_the_web_get_services() {
       'svg-square' => 'facebook-square.svg',
       'icon' => 'facebook-logo-fill',
     ),
-    'pinterest' => array(
-      'name' => 'Pinterest',
-      'fa-icon' => 'fa-pinterest',
-      'fa-icon-square' => 'fa-pinterest-square',
+    'flickr' => array(
+      'name' => 'Flickr',
+      'fa-icon' => 'fa-flickr',
       'v5style' => 'fab', // Brand
-      'svg' => 'pinterest.svg',
-      'svg-square' => 'pinterest-square.svg',
-      'icon' => 'pinterest-logo-fill',
-    ),
-    'instagram' => array(
-      'name' => 'Instagram',
-      'fa-icon' => 'fa-instagram',
-      'v5style' => 'fab', // Brand
-      'svg' => 'instagram.svg',
-      'svg-square' => 'instagram-square.svg',
-      'icon' => 'instagram-logo-fill',
+      'svg' => 'flickr.svg',
+      'icon' => 'camera-fill',
     ),
     'github' => array(
       'name' => 'GitHub',
@@ -66,37 +55,13 @@ function on_the_web_get_services() {
       'svg-square' => 'github-square.svg',
       'icon' => 'github-logo-fill',
     ),
-    'tiktok' => array(
-      'name' => 'TikTok',
-      'fa-icon' => 'fa-tiktok',
+    'instagram' => array(
+      'name' => 'Instagram',
+      'fa-icon' => 'fa-instagram',
       'v5style' => 'fab', // Brand
-      'svg' => 'tiktok.svg',
-      'icon' => 'tiktok-logo-fill',
-    ),
-    'youtube' => array(
-      'name' => 'YouTube',
-      'fa-icon' => 'fa-youtube',
-      'fa-icon-square' => 'fa-youtube-square',
-      'v5style' => 'fab', // Brand
-      'svg' => 'youtube.svg',
-      'svg-square' => 'youtube-square.svg',
-      'icon' => 'youtube-logo-fill',
-    ),
-    'flickr' => array(
-      'name' => 'Flickr',
-      'fa-icon' => 'fa-flickr',
-      'v5style' => 'fab', // Brand
-      'svg' => 'flickr.svg',
-      'icon' => 'camera-fill',
-    ),
-    'linkedin' => array(
-      'name' => 'LinkedIn',
-      'fa-icon' => 'fa-linkedin',
-      'fa-icon-square' => 'fa-linkedin-square',
-      'v5style' => 'fab', // Brand
-      'svg' => 'linkedin-in.svg',
-      'svg-square' => 'linkedin-square.svg',
-      'icon' => 'linkedin-logo-fill',
+      'svg' => 'instagram.svg',
+      'svg-square' => 'instagram-square.svg',
+      'icon' => 'instagram-logo-fill',
     ),
     'lastfm' => array(
       'name' => 'LastFM',
@@ -107,6 +72,32 @@ function on_the_web_get_services() {
       'v5style' => 'fab', // Brand
       'icon' => 'lastfm-logo-fill',
     ),
+    'linkedin' => array(
+      'name' => 'LinkedIn',
+      'fa-icon' => 'fa-linkedin',
+      'fa-icon-square' => 'fa-linkedin-square',
+      'v5style' => 'fab', // Brand
+      'svg' => 'linkedin-in.svg',
+      'svg-square' => 'linkedin-square.svg',
+      'icon' => 'linkedin-logo-fill',
+    ),
+    'mastodon' => array(
+      'name' => 'Mastodon',
+      'fa-icon' => 'fa-mastodon',
+      'fa-icon-square' => 'fa-mastodon-square',
+      'v5style' => 'fab', // Brand
+      'svg' => 'mastodon.svg',
+      'icon' => 'mastodon-logo-fill',
+    ),
+    'pinterest' => array(
+      'name' => 'Pinterest',
+      'fa-icon' => 'fa-pinterest',
+      'fa-icon-square' => 'fa-pinterest-square',
+      'v5style' => 'fab', // Brand
+      'svg' => 'pinterest.svg',
+      'svg-square' => 'pinterest-square.svg',
+      'icon' => 'pinterest-logo-fill',
+    ),
     'soundcloud' => array(
       'name' => 'Soundcloud',
       'fa-icon' => 'fa-soundcloud',
@@ -114,24 +105,33 @@ function on_the_web_get_services() {
       'svg' => 'soundcloud.svg',
       'icon' => 'soundcloud-logo-fill',
     ),
-    'delicious' => array(
-      'name' => 'Delicious',
-      'fa-icon' => 'fa-delicious',
+    'tiktok' => array(
+      'name' => 'TikTok',
+      'fa-icon' => 'fa-tiktok',
       'v5style' => 'fab', // Brand
-      'svg' => 'delicious.svg',
-      'icon' => 'checkerboard-fill',
+      'svg' => 'tiktok.svg',
+      'icon' => 'tiktok-logo-fill',
+    ),
+    'twitter' => array(
+      'name' => 'Twitter',
+      'fa-icon' => 'fa-twitter',
+      'fa-icon-square' => 'fa-twitter-square',
+      'v5style' => 'fab', // Brand
+      'svg' => 'twitter.svg',
+      'svg-square' => 'twitter-square.svg',
+      'icon' => 'twitter-logo-fill',
+    ),
+    'youtube' => array(
+      'name' => 'YouTube',
+      'fa-icon' => 'fa-youtube',
+      'fa-icon-square' => 'fa-youtube-square',
+      'v5style' => 'fab', // Brand
+      'svg' => 'youtube.svg',
+      'svg-square' => 'youtube-square.svg',
+      'icon' => 'youtube-logo-fill',
     ),
 
     /* Icons that are the FontAwesome "Solid" style. */
-    'rss' => array(
-      'name' => 'RSS Feed',
-      'fa-icon' => 'fa-rss',
-      'fa-icon-square' => 'fa-rss-square',
-      'v5style' => 'fas', // Solid
-      'svg' => 'rss.svg',
-      'svg-square' => 'rss-square.svg',
-      'icon' => 'rss-fill',
-    ),
     'envelope' => array(
       'name' => 'Newsletter (or Contact)',
       'fa-icon' => 'fa-envelope',
@@ -147,6 +147,15 @@ function on_the_web_get_services() {
       'v5style' => 'fas', // Solid
       'svg' => 'podcast.svg',
       'icon' =>'microphone-fill',
+    ),
+    'rss' => array(
+      'name' => 'RSS Feed',
+      'fa-icon' => 'fa-rss',
+      'fa-icon-square' => 'fa-rss-square',
+      'v5style' => 'fas', // Solid
+      'svg' => 'rss.svg',
+      'svg-square' => 'rss-square.svg',
+      'icon' => 'rss-fill',
     ),
   );
 

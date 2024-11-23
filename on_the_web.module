@@ -40,6 +40,12 @@ function on_the_web_menu() {
  */
 function on_the_web_icon_info() {
 
+  $icons['otw-bluesky'] = array(
+    'name' => 'bluesky',
+  );
+  $icons['otw-bluesky-square'] = array(
+    'name' => 'bluesky-square',
+  );
   $icons['otw-delicious'] = array(
     'name' => 'delicious',
   );
