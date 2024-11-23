@@ -111,7 +111,7 @@ function on_the_web_settings_form($form, &$form_state) {
   );
   $form['settngs']['square'] = array(
     '#type' => 'checkbox',
-    '#title' => t("Use 'filled' or 'square' icons when available."),
+    '#title' => t("Use a 'square' icon when available."),
     '#default_value' => $config->get('square'),
     '#states' => array(
       'invisible' => array(
