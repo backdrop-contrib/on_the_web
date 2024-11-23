@@ -21,8 +21,8 @@ function theme_on_the_web_item($variables) {
   $service = $variables['service'];
   $link = $variables['link'];
   $icon = $variables['icon'];
-  $size = $variables['size'];
   $title = $variables['title'];
+  $size = $variables['size'];
   $link_classes = !empty($variables['classes'])? $variables['classes'] : array();
   $icon_classes = !empty($variables['icon_classes'])? $variables['icon_classes'] : array();
 
@@ -96,9 +96,9 @@ function theme_on_the_web_item__icon($variables) {
   $link = $variables['link'];
   $icon = $variables['icon'];
   $title = $variables['title'];
-  $target = $variables['target'];
   $link_classes = !empty($variables['classes'])? $variables['classes'] : array();
   $icon_classes = !empty($variables['icon_classes'])? $variables['icon_classes'] : array();
+  $target = config_get('on_the_web.settings', 'target');
 
   // Determine attributes for the link.
   $attributes = array(
