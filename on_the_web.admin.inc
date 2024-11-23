@@ -38,16 +38,6 @@ function on_the_web_settings_form($form, &$form_state) {
       '#description' => t('SVG icons will approximately match the icon fonts.'),
     ),
   );
-  $form['settngs']['square'] = array(
-    '#type' => 'checkbox',
-    '#title' => t("Use 'filled' or 'square' icons when available."),
-    '#default_value' => $config->get('square'),
-    '#states' => array(
-      'invisible' => array(
-        ':input[name="type"]' => array('value' => 'image'),
-      ),
-    ),
-  );
 
   $sources = array(
     'forkawesome' => array(
@@ -81,9 +71,10 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
   );
 
+  $attributes = array('attributes' => array('target' => '_blank'));
   $source_options = array();
   foreach ($sources as $source) {
-    $icons_link = l('see all icons', $source['icons_url']);
+    $icons_link = l('see all icons', $source['icons_url'], $attributes);
     $source_options[$source['key']] = $source['label'] . ' &mdash; ' . $icons_link;
     $form['version']['key']['#description'] = $source['description'];
   }
@@ -100,7 +91,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => 'abcdefghij',
     ),
-    '#description' => t('A 10-digit hash from the FontAwesome Kit code. <a href=":faurl">Register with FontAwesome</a> to generate a Kit.', array(':faurl' => '')),
+    '#description' => t('A 10-digit hash from the FontAwesome Kit code. <a href="@faurl">Register with FontAwesome</a> to generate a Kit.', array('@faurl' => 'https://fontawesome.com/start')),
     '#states' => array(
       'visible' => array(
         ':input[name="type"]' => array('value' => 'font'),
@@ -118,13 +109,23 @@ function on_the_web_settings_form($form, &$form_state) {
     ),
     '#default_value' => $size_setting,
   );
+  $form['settngs']['square'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Use 'filled' or 'square' icons when available."),
+    '#default_value' => $config->get('square'),
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="type"]' => array('value' => 'image'),
+      ),
+    ),
+  );
   $form['settngs']['sitename'] = array(
     '#type' => 'radios',
     '#title' => 'Hover text selection',
     '#default_value' => (int)$config->get('sitename'),
     '#description' => t('This setting will update the title attribute for each social media link.'),
     '#options' => array(
-      1 => t('Use the <strong><a href="!url">Site name</a></strong>, for example: <em>Find !us on Facebook</em>', array('!us' => config_get('system.core', 'site_name'), '!url' => url('admin/config/system/site-information'))),
+      1 => t('Use the <strong><a href="!url" target="_blank">Site name</a></strong>, for example: <em>Find !us on Facebook</em>', array('!us' => config_get('system.core', 'site_name'), '!url' => url('admin/config/system/site-information'))),
       0 => t('Use <strong>us</strong>, for example: <em>Find us on Facebook</em>'),
       2 => t('Use <strong>me</strong>, for example: <em>Find me on Facebook</em>'),
     ),
@@ -133,7 +134,7 @@ function on_the_web_settings_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Open links in new windows'),
     '#default_value' => $config->get('target'),
-    '#description' => t('Unchecking this box his will remove the target="_blank" attribute from each link.'),
+    '#description' => t('Not recommended. Using the target="_blank" attribute outside a form is less accessible.'),
   );
 
   $path = backdrop_get_path('module', 'on_the_web');
